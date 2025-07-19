@@ -1,0 +1,30 @@
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.scroll-info {
+  text-align: center;
+  padding: 10px;
+  background: #f8f9fa;
+  margin-top: 10px;
+  display: none;
+}
+
+.loading-spinner {
+  display: none;
+  text-align: center;
+  padding: 10px;
+}
+
+.view-option {
+  margin-right: 15px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.view-option.active {
+  color: #007bff;
+  text-decoration: underline;
+}

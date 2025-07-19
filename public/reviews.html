@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Reviews Management</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.css"
+    integrity="sha512-fjO3Vy3QodX9c6G9AUmr6WuIaEPdGRxBjD7gjatG5gGylzYyrEq3U0q+smkG6CwIY0L8XALRFHh4KPHig0Q1ug=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      box-shadow: 0 0.15rem 1.75rem 0 rgba(33, 40, 50, 0.15);
+    }
+    .card-header {
+      font-weight: 500;
+    }
+    .table th {
+      border-top: none;
+    }
+    .star-rating {
+      color: #ffc107;
+    }
+    .action-btn {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .search-container {
+      max-width: 300px;
+    }
+    .deleted-row {
+      background-color: rgba(220, 53, 69, 0.1);
+    }
+    /* Pagination styles */
+    .pagination {
+      justify-content: center;
+    }
+    .pagination li {
+      margin: 0 5px;
+    }
+    .pagination li a {
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+    }
+    .pagination li.active a {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    /* View mode toggle */
+    .view-option {
+      padding: 5px 10px;
+      margin: 0 5px;
+      cursor: pointer;
+      border-radius: 4px;
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+    }
+    .view-option.active {
+      background-color: #007bff;
+      color: white;
+      border-color: #007bff;
+    }
+    /* Loading spinner */
+    .loading-spinner {
+      text-align: center;
+      padding: 20px;
+      display: none;
+    }
+    /* Scroll info */
+    .scroll-info {
+      text-align: center;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #f8f9fa;
+      border-radius: 4px;
+      display: none;
+    }
+    /* Export buttons */
+    .export-buttons {
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid py-4">
+    <div class="card">
+      <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h3 class="mb-0">Reviews Management</h3>
+        <div>
+          <button class="btn btn-light btn-sm" id="refreshBtn">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center">
+              <div class="mr-3">
+                <span class="view-option active" data-view="pagination">Pagination</span>
+                <span class="view-option" data-view="infinite">Infinite Scroll</span>
+              </div>
+              <div class="input-group search-container">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search reviews..." />
+                <div class="input-group-append">
+                  <button class="btn btn-outline-primary" type="button" id="searchBtn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 text-right">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-outline-secondary filter-btn" data-filter="active">
+                Active
+              </button>
+              <button type="button" class="btn btn-outline-secondary filter-btn" data-filter="deleted">
+                Deleted
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="export-buttons">
+          <button class="btn btn-info" id="exportExcel"><i class="fas fa-file-excel"></i> Export Excel</button>
+          <button class="btn btn-danger" id="exportPdf"><i class="fas fa-file-pdf"></i> Export PDF</button>
+        </div>
+
+        <div class="table-responsive">
+          <table id="reviewsTable" class="table table-hover">
+            <thead class="thead-light">
+              <tr>
+                <th>ID</th>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Item</th>
+                <th>Rating</th>
+                <th>Review</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reviewsBody">
+              <!-- Reviews will load here -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div id="pagination-container" class="pagination-container">
+          <ul class="pagination" id="pagination">
+            <!-- Pagination will be loaded here -->
+          </ul>
+        </div>
+        
+        <div id="scroll-info" class="scroll-info">
+          <i class="fas fa-arrow-down"></i> Scroll down to load more reviews <i class="fas fa-arrow-down"></i>
+        </div>
+        
+        <div id="loading-spinner" class="loading-spinner">
+          <div class="spinner-border text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <p class="mt-2">Loading more reviews...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+   <!-- JavaScript Libraries -->
+   <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+   integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+ <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+   integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+   crossorigin="anonymous"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+   integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+   crossorigin="anonymous"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+ <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"
+   integrity="sha512-LGHBR+kJ5jZSIzhhdfytPoEHzgaYuTRifq9g5l6ja6/k9NAOsAi5dQh4zQF6JIRB8cAYxTRedERUF+97/KuivQ=="
+   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"
+   integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg=="
+   crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <!-- Custom JavaScript -->
+  <script src="js/review.js"></script>
+</body>
+</html>
