@@ -144,6 +144,9 @@
 </head>
 
 <body>
+  <!-- Header will be loaded here -->
+  <div id="adminHeader"></div>
+  
   <div class="container-fluid py-4">
     <div class="card">
       <div class="card-header bg-primary text-white">
@@ -321,6 +324,18 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <!-- Custom JavaScript -->
-  <script src="js/item.js"></script>
+  <script>
+    $(document).ready(function() {
+      // Load the admin header
+      $("#adminHeader").load("adminHeader.html", function() {
+        // Your item management JavaScript code will go here
+        // This ensures the header loads before the rest of your functionality
+        
+        // You can either include your item.js code directly here,
+        // or load it after the header is loaded:
+        $.getScript("js/item.js");
+      });
+    });
+  </script>
 </body>
 </html>

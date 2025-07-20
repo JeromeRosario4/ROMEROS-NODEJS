@@ -13,7 +13,7 @@ const sendEmail = async ({ email, subject, message, attachPdf = false, pdfFilena
     });
 
     const mailOptions = {
-      from: '"BunBun Threads" <noreply@bunbunthreads.com>',
+      from: '"ROMEROS KINGDOM" <noreply@romeros.com>',
       to: email,
       subject: subject,
       html: message

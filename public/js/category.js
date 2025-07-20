@@ -304,7 +304,7 @@ $(document).ready(function () {
 
     $.ajax({
       method: "POST",
-      url: `${url}api/category/create`,
+      url: `${url}api/category`,
       data: JSON.stringify(formData),
       contentType: "application/json",
       success: function () {

@@ -186,7 +186,7 @@ const sendOrderConfirmationEmailAsync = async (orderinfo_id, customer_id, shippi
 
     const message = `
       <h3>Hi ${fullName || 'Customer'},</h3>
-      <p>Thank you for placing your order with <strong>BunBun Threads</strong>!</p>
+      <p>Thank you for placing your order with ROMEROS KINGDOM!</p>
       <p><strong>Order ID:</strong> ${orderinfo_id}</p>
       <p><strong>Date Placed:</strong> ${new Date(date_placed).toLocaleDateString()}</p>
 
@@ -205,7 +205,7 @@ const sendOrderConfirmationEmailAsync = async (orderinfo_id, customer_id, shippi
 
     await sendEmailAsync({
       email,
-      subject: `BunBun Threads - Order #${orderinfo_id} Confirmation`,
+      subject: `ROMEROS KINGDOM Order #${orderinfo_id} Confirmation`,
       message,
       attachPdf: true,
       pdfFilename: `Order_${orderinfo_id}_Receipt.pdf`
@@ -546,8 +546,8 @@ const sendOrderStatusUpdateEmailAsync = async (orderId, status) => {
 
     const statusMessages = {
       Pending: 'Your order is now marked as <strong>Pending</strong>. We\'ll prepare it shortly!',
-      Shipped: 'Great news! Your order has been <strong>shipped</strong> and is on its way.',
-      Delivered: 'Your order has been <strong>delivered</strong>. We hope you enjoy it!',
+      Shipped: 'Your order has been <strong>shipped</strong> and is on its way.',
+      Delivered: 'Your order has been <strong>delivered</strong>. We hope you enjoy your purchase!',
       Cancelled: 'We\'re sorry. Your order has been <strong>cancelled</strong>. Please contact us if this was a mistake.',
     };
 
@@ -572,12 +572,12 @@ const sendOrderStatusUpdateEmailAsync = async (orderId, status) => {
       <p><strong>Shipping:</strong> ${region} - ₱${parseFloat(rate).toFixed(2)}</p>
       <p><strong>Total:</strong> ₱${total}</p>
 
-      <br><p>Thank you for shopping at <strong>BunBun Threads</strong>!</p>
+      <br><p>Thank you for shopping at ROMEROS KINGDOM!</p>
     `;
 
     await sendEmailAsync({
       email,
-      subject: `BunBun Threads - Order #${orderId} Status Update: ${status}`,
+      subject: `ROMEROS KINGDOM Order #${orderId} Status Update: ${status}`,
       message,
       attachPdf: true
     });
