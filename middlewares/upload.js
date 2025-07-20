@@ -1,17 +1,29 @@
-const multer = require("multer");
-const path = require("path");
+const multer = require('multer');
+const path = require('path');
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'public/images');
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname).toLowerCase();
-        const baseName = path.parse(file.originalname).name.replace(/\\/g, '/');
-        cb(null, baseName + '-' + uniqueSuffix + ext);
-    }
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads/reviews');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
 });
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (ext !== '.png' && ext !== '.jpg' && ext !== '.jpeg') {
+      return cb(new Error('Only PNG and JPG are allowed'), false);
+    }
+    cb(null, true);
+  }
+});
+
+module.exports = upload;
+
 
 module.exports = multer({
     storage: storage,

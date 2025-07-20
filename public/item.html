@@ -322,17 +322,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"
     integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-  <!-- Custom JavaScript -->
   <script>
     $(document).ready(function() {
-      // Load the admin header
       $("#adminHeader").load("adminHeader.html", function() {
-        // Your item management JavaScript code will go here
-        // This ensures the header loads before the rest of your functionality
-        
-        // You can either include your item.js code directly here,
-        // or load it after the header is loaded:
         $.getScript("js/item.js");
       });
     });

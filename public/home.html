@@ -108,7 +108,7 @@
     /* Products Grid */
     .products-grid-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 25px;
     }
 
@@ -126,9 +126,29 @@
       box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
     }
 
-    .product-image {
-      height: 200px;
+    /* Product Image Gallery */
+    .product-image-gallery {
+      position: relative;
+      height: 250px;
       overflow: hidden;
+    }
+
+    .product-image-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .product-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .product-image.active {
+      opacity: 1;
     }
 
     .product-image img {
@@ -140,6 +160,84 @@
 
     .product-card:hover .product-image img {
       transform: scale(1.05);
+    }
+
+    /* Gallery Navigation */
+    .gallery-nav {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .gallery-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .gallery-dot.active {
+      background: var(--primary-purple);
+      transform: scale(1.2);
+    }
+
+    .gallery-dot:hover {
+      background: var(--light-purple);
+    }
+
+    /* Gallery Arrows */
+    .gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .product-card:hover .gallery-arrow {
+      opacity: 1;
+    }
+
+    .gallery-arrow:hover {
+      background: rgba(139, 92, 246, 0.8);
+    }
+
+    .gallery-arrow.prev {
+      left: 10px;
+    }
+
+    .gallery-arrow.next {
+      right: 10px;
+    }
+
+    /* Image Counter */
+    .image-counter {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      z-index: 10;
     }
 
     .product-info {
@@ -265,6 +363,74 @@
       margin-bottom: 20px;
     }
 
+    /* Modal Image Gallery */
+    .modal-image-gallery {
+      position: relative;
+      height: 350px;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .modal-image-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .modal-gallery-nav {
+      position: absolute;
+      bottom: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      z-index: 10;
+    }
+
+    .modal-gallery-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .modal-gallery-dot.active {
+      background: var(--primary-purple);
+      transform: scale(1.2);
+    }
+
+    .modal-gallery-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .modal-gallery-arrow:hover {
+      background: rgba(139, 92, 246, 0.8);
+    }
+
+    .modal-gallery-arrow.prev {
+      left: 15px;
+    }
+
+    .modal-gallery-arrow.next {
+      right: 15px;
+    }
+
     /* Reviews Section Styles */
     .reviews-container {
       max-height: 300px;
@@ -342,7 +508,7 @@
     </div>
   </main>
 
-  <!-- Product Details Modal with Reviews Section -->
+  <!-- Product Details Modal with Enhanced Image Gallery -->
   <div class="modal fade" id="productDetailsModal" tabindex="-1" aria-labelledby="productDetailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
@@ -353,8 +519,19 @@
         <div class="modal-body">
           <div class="row">
             <div class="col-md-6">
-              <div class="text-center mb-4">
-                <img id="modalProductImage" src="" class="img-fluid rounded" style="max-height: 300px;">
+              <div class="modal-image-gallery">
+                <div class="modal-image-container" id="modalImageContainer">
+                  <!-- Modal images will be inserted here -->
+                </div>
+                <button class="modal-gallery-arrow prev" id="modalPrevBtn">
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="modal-gallery-arrow next" id="modalNextBtn">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="modal-gallery-nav" id="modalGalleryNav">
+                  <!-- Modal navigation dots will be inserted here -->
+                </div>
               </div>
             </div>
             <div class="col-md-6">
@@ -430,6 +607,181 @@
           const userId = localStorage.getItem('userId');
           return token && userId;
       }
+
+      // Image Gallery Management
+      class ImageGallery {
+        constructor(container, images, isModal = false) {
+          this.container = container;
+          this.images = images;
+          this.currentIndex = 0;
+          this.isModal = isModal;
+          this.init();
+        }
+
+        init() {
+          this.createImageElements();
+          this.createNavigation();
+          this.bindEvents();
+          this.showImage(0);
+          this.startAutoRotate();
+        }
+
+        createImageElements() {
+          const imageContainer = this.isModal ? 
+            this.container.find('.modal-image-container') : 
+            this.container.find('.product-image-container');
+          
+          imageContainer.empty();
+          
+          this.images.forEach((image, index) => {
+            const imgElement = `
+              <div class="product-image ${index === 0 ? 'active' : ''}">
+                <img src="${imageBaseUrl}${image}" alt="Product Image ${index + 1}" 
+                     onerror="this.src='${imageBaseUrl}placeholder.jpg'; this.onerror=null;">
+              </div>
+            `;
+            imageContainer.append(imgElement);
+          });
+        }
+
+        createNavigation() {
+          // Create dots
+          const navContainer = this.isModal ? 
+            this.container.find('.modal-gallery-nav') : 
+            this.container.find('.gallery-nav');
+          
+          navContainer.empty();
+          
+          this.images.forEach((_, index) => {
+            const dotClass = this.isModal ? 'modal-gallery-dot' : 'gallery-dot';
+            const dot = `<div class="${dotClass} ${index === 0 ? 'active' : ''}" data-index="${index}"></div>`;
+            navContainer.append(dot);
+          });
+
+          // Add image counter for card view
+          if (!this.isModal) {
+            const counter = `<div class="image-counter">1 / ${this.images.length}</div>`;
+            this.container.find('.product-image-gallery').append(counter);
+          }
+        }
+
+        bindEvents() {
+          const self = this;
+          const prefix = this.isModal ? '.modal-gallery' : '.gallery';
+          
+          // Arrow navigation
+          this.container.on('click', `${prefix}-arrow.prev`, () => {
+            this.prevImage();
+          });
+
+          this.container.on('click', `${prefix}-arrow.next`, () => {
+            this.nextImage();
+          });
+
+          // Dot navigation
+          const dotClass = this.isModal ? '.modal-gallery-dot' : '.gallery-dot';
+          this.container.on('click', dotClass, function() {
+            const index = parseInt($(this).data('index'));
+            self.showImage(index);
+          });
+
+          // Pause auto-rotate on hover
+          if (!this.isModal) {
+            this.container.hover(
+              () => this.pauseAutoRotate(),
+              () => this.startAutoRotate()
+            );
+          }
+        }
+
+        showImage(index) {
+          const imageElements = this.isModal ? 
+            this.container.find('.modal-image-container .product-image') :
+            this.container.find('.product-image-container .product-image');
+          
+          const dotElements = this.isModal ?
+            this.container.find('.modal-gallery-dot') :
+            this.container.find('.gallery-dot');
+
+          // Hide all images and show selected
+          imageElements.removeClass('active');
+          imageElements.eq(index).addClass('active');
+
+          // Update dots
+          dotElements.removeClass('active');
+          dotElements.eq(index).addClass('active');
+
+          // Update counter for card view
+          if (!this.isModal) {
+            this.container.find('.image-counter').text(`${index + 1} / ${this.images.length}`);
+          }
+
+          this.currentIndex = index;
+        }
+
+        nextImage() {
+          const nextIndex = (this.currentIndex + 1) % this.images.length;
+          this.showImage(nextIndex);
+        }
+
+        prevImage() {
+          const prevIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+          this.showImage(prevIndex);
+        }
+
+        startAutoRotate() {
+          if (this.isModal || this.images.length <= 1) return;
+          
+          this.autoRotateInterval = setInterval(() => {
+            this.nextImage();
+          }, 4000); // Change image every 4 seconds
+        }
+
+        pauseAutoRotate() {
+          if (this.autoRotateInterval) {
+            clearInterval(this.autoRotateInterval);
+            this.autoRotateInterval = null;
+          }
+        }
+
+        destroy() {
+          this.pauseAutoRotate();
+          this.container.off('click');
+        }
+      }
+
+      // Function to get product images (simulated - you'll need to modify based on your API)
+      function getProductImages(productId, mainImage) {
+        // For now, we'll simulate multiple images by using the main image and placeholder variations
+        // In a real implementation, you'd fetch this from your API
+        const images = [mainImage];
+        
+        // Add placeholder variations (you should replace this with actual API call)
+        for (let i = 2; i <= 3; i++) {
+          images.push(`${productId}_${i}.jpg`);
+        }
+        
+        return images;
+      }
+
+      function loadItems() {
+  $.ajax({
+    url: 'http://localhost:3000/api/item',
+    method: 'GET',
+    success: function (data) {
+      let html = '';
+
+      data.rows.forEach((value, index) => {
+        // this is where you build HTML for each product
+      });
+
+      $('#item-list').html(html);
+    },
+    error: function (err) {
+      console.error(err);
+    }
+  });
+}
 
       // Function to load reviews for a product
       function loadReviews(itemId) {
@@ -536,10 +888,24 @@
               $(".products-grid-container").empty();
 
               $.each(data.rows, function (key, value) {
+                  const productImages = value.images && value.images.length > 0 ? value.images : [value.image];
+
+                  
                   const itemCard = `
                   <div class="product-card" data-id="${value.item_id}">
-                      <div class="product-image">
-                          <img src="${imageBaseUrl}${value.image}" alt="${value.item_name}" onerror="this.src='${imageBaseUrl}placeholder.jpg'; this.onerror=null;">
+                      <div class="product-image-gallery">
+                          <div class="product-image-container">
+                              <!-- Images will be inserted by ImageGallery class -->
+                          </div>
+                          <button class="gallery-arrow prev">
+                              <i class="fas fa-chevron-left"></i>
+                          </button>
+                          <button class="gallery-arrow next">
+                              <i class="fas fa-chevron-right"></i>
+                          </button>
+                          <div class="gallery-nav">
+                              <!-- Navigation dots will be inserted here -->
+                          </div>
                       </div>
                       <div class="product-info">
                           <span class="product-category">${value.category_name || 'Uncategorized'}</span>
@@ -568,7 +934,8 @@
                                       data-price="${value.sell_price}"
                                       data-image="${value.image}"
                                       data-stock="${value.quantity ?? 0}"
-                                      data-category="${value.category_name || 'Uncategorized'}">
+                                      data-category="${value.category_name || 'Uncategorized'}"
+                                      data-images='${JSON.stringify(productImages)}'>
                                       <i class="fas fa-info-circle"></i>
                                       Details
                                   </button>
@@ -576,7 +943,12 @@
                           </div>
                       </div>
                   </div>`;
+                  
                   $(".products-grid-container").append(itemCard);
+                  
+                  // Initialize image gallery for this product card
+                  const $card = $(`.product-card[data-id="${value.item_id}"]`);
+                  new ImageGallery($card, productImages, false);
               });
           },
           error: function (error) {
@@ -584,6 +956,9 @@
           }
         });
       }
+
+      // Store modal gallery instance
+      let modalGallery = null;
 
       // Show product details in modal
       $(document).on('click', '.view-details', function() {
@@ -594,15 +969,24 @@
         const image = $(this).data('image');
         const stock = $(this).data('stock');
         const category = $(this).data('category');
+        const images = $(this).data('images') || [image];
 
         $('#productDetailsModalLabel').text(name).data('id', id);
         $('#modalProductName').text(name);
         $('#modalProductDescription').text(description);
-        $('#modalProductImage').attr('src', `${imageBaseUrl}${image}`);
         $('#modalProductCategory').text(category);
         $('#modalProductPrice').text(`₱${price}`);
         $('#modalProductStock').text(stock);
         $('#modalQuantityInput').attr('max', stock).val(1);
+        
+        // Clean up previous modal gallery
+        if (modalGallery) {
+          modalGallery.destroy();
+        }
+        
+        // Initialize modal image gallery
+        const $modal = $('#productDetailsModal');
+        modalGallery = new ImageGallery($modal, images, true);
         
         // Load reviews for this product
         loadReviews(id);
@@ -616,7 +1000,7 @@
         const id = $('#productDetailsModalLabel').data('id');
         const name = $('#modalProductName').text();
         const price = parseFloat($('#modalProductPrice').text().replace('₱', ''));
-        const image = $('#modalProductImage').attr('src').replace(imageBaseUrl, '');
+        const image = $('#modalImageContainer .product-image.active img').attr('src').replace(imageBaseUrl, '');
         const stock = parseInt($('#modalProductStock').text());
         
         if (!isUserLoggedIn()) {
@@ -707,6 +1091,14 @@
         $(this).addClass('active');
         
         loadItems(category);
+      });
+
+      // Clean up modal gallery when modal closes
+      $('#productDetailsModal').on('hidden.bs.modal', function() {
+        if (modalGallery) {
+          modalGallery.destroy();
+          modalGallery = null;
+        }
       });
 
       // Initialize cart count

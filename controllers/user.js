@@ -149,83 +149,70 @@ const loginUser = (req, res) => {
 };
 
 // ----------------- Create or Update Profile -----------------
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+// ----------------- Update User Profile -----------------
 const updateUser = (req, res) => {
-  const { title, fname, lname, addressline, town, phone, userId } = req.body;
+  const title = req.body.title;
+  const fname = req.body.fname;
+  const lname = req.body.lname;
+  const addressline = req.body.addressline;
+  const town = req.body.town;
+  const phone = req.body.phone;
+  const userId = req.body.userId;
+
+  const image = req.file ? req.file.path.replace(/\\/g, "/").replace("public/", "") : null;
+
+    // ✅ Add the log here
+  console.log('Form data received:', {
+    title, fname, lname, addressline, town, phone, userId, image
+  });
 
   if (!userId) {
     return res.status(400).json({ error: "Missing userId" });
   }
 
-  const image = req.file ? req.file.path.replace(/\\/g, "/").replace("public/", "") : null;
-
   const checkSql = `SELECT customer_id FROM customer WHERE user_id = ?`;
-  connection.execute(checkSql, [userId], (checkErr, checkResult) => {
-    if (checkErr) {
-      console.log("Check customer error:", checkErr);
-      return res.status(500).json({ error: checkErr });
-    }
+  connection.query(checkSql, [userId], (err, results) => {
+    if (err) return res.status(500).json({ error: err.message });
 
-    if (checkResult.length > 0) {
-      // ✅ Update profile
-      let updateSql, updateParams;
-
-      if (image) {
-        updateSql = `
-          UPDATE customer SET 
-            title = ?, 
-            fname = ?, 
-            lname = ?, 
-            addressline = ?, 
-            town = ?, 
-            phone = ?, 
-            image_path = ?
-          WHERE user_id = ?`;
-        updateParams = [title, fname, lname, addressline, town, phone, image, userId];
-      } else {
-        updateSql = `
-          UPDATE customer SET 
-            title = ?, 
-            fname = ?, 
-            lname = ?, 
-            addressline = ?, 
-            town = ?, 
-            phone = ?
-          WHERE user_id = ?`;
-        updateParams = [title, fname, lname, addressline, town, phone, userId];
-      }
-
-      connection.execute(updateSql, updateParams, (updateErr, updateResult) => {
-        if (updateErr instanceof Error) {
-          console.log("Update error:", updateErr);
-          return res.status(500).json({ error: updateErr });
-        }
-
-        return res.status(200).json({
-          success: true,
-          message: 'Profile updated successfully.',
-          result: updateResult
-        });
-      });
-    } else {
-      // 🆕 Insert profile
+    if (results.length === 0) {
+      // No customer row found, so INSERT
       const insertSql = `
-        INSERT INTO customer 
-          (title, fname, lname, addressline, town, phone, image_path, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+        INSERT INTO customer (title, fname, lname, addressline, town, phone, user_id, image_path)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `;
 
-      const insertParams = [title, fname, lname, addressline, town, phone, image, userId];
+      const insertValues = [title, fname, lname, addressline, town, phone, userId, image];
 
-      connection.execute(insertSql, insertParams, (insertErr, insertResult) => {
-        if (insertErr instanceof Error) {
-          console.log("Insert error:", insertErr);
-          return res.status(500).json({ error: insertErr });
-        }
+      connection.query(insertSql, insertValues, (insertErr) => {
+        if (insertErr) return res.status(500).json({ error: insertErr.message });
+        return res.json({ message: "Profile created successfully" });
+      });
 
-        return res.status(200).json({
-          success: true,
-          message: 'Profile created successfully.',
-          result: insertResult
-        });
+    } else {
+      // Customer row found, so UPDATE
+      const customerId = results[0].customer_id;
+      const updateSql = `
+  UPDATE customer SET 
+    title = ?, 
+    fname = ?, 
+    lname = ?, 
+    addressline = ?, 
+    town = ?, 
+    phone = ?${image ? ', image_path = ?' : ''}
+  WHERE customer_id = ?
+`;
+
+
+      const updateValues = image
+        ? [title, fname, lname, addressline, town, phone, image, customerId]
+        : [title, fname, lname, addressline, town, phone, customerId];
+
+      connection.query(updateSql, updateValues, (updateErr) => {
+        if (updateErr) return res.status(500).json({ error: updateErr.message });
+        return res.json({ message: "Profile updated successfully" });
       });
     }
   });

@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const reviewController = require('../controllers/review');
-const upload = require('../middlewares/upload');
+const upload = require('../middlewares/upload'); // Multer middleware
+
+router.post('/create', upload.array('images', 5), reviewController.createReview);
+
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 
 router.post('/create', upload.array('images', 5), reviewController.createReview);

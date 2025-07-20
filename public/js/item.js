@@ -439,7 +439,7 @@ $(document).ready(function () {
             loadItems();
           },
           error: function (err) {
-            console.error(err);
+            console.error(err); 
             Swal.fire('Error', 'Failed to restore item.', 'error');
           }
         });
