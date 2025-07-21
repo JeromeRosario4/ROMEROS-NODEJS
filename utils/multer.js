@@ -17,15 +17,6 @@ const storage = multer.diskStorage({
   }
 });
 
-const express = require('express');
-const router = express.Router();
-const reviewController = require('../controllers/review');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // or your storage setup
-
-router.post('/reviews', upload.array('image'), reviewController.createReview);
-
-
 // File filter for image types only
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
@@ -36,8 +27,11 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Export configured multer instance
-module.exports = multer({
+// Create and export configured multer instance
+const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
 });
+
+module.exports = upload;

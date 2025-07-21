@@ -149,8 +149,6 @@ const loginUser = (req, res) => {
 };
 
 // ----------------- Create or Update Profile -----------------
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 // ----------------- Update User Profile -----------------
 const updateUser = (req, res) => {
