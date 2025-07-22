@@ -4,13 +4,38 @@ const reviewController = require('../controllers/review');
 const upload = require('../middlewares/upload');
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 
-router.post('/create', upload.array('images', 5), reviewController.createReview);
-router.get('/customer/:customerId', reviewController.getReviewsByCustomer);
+// Public routes
 router.get('/', reviewController.getAllReviews);
-router.put('/edit/:id', upload.array('images', 5), reviewController.updateReview); 
-router.put('/delete/:id', reviewController.softDeleteReview); 
-router.patch('/restore/:id', reviewController.restoreReview); 
-router.get('/admin', isAuthenticatedUser, authorizeRoles('Admin'), reviewController.getAllDeletedReviews);
+router.get('/customer/:customerId', reviewController.getReviewsByCustomer);
 
+// Authenticated user routes
+router.post('/create', 
+  isAuthenticatedUser,
+  upload.array('images', 5), 
+  reviewController.createReview
+);
+
+router.put('/edit/:id', 
+  isAuthenticatedUser,
+  upload.array('images', 5), 
+  reviewController.updateReview
+); 
+
+router.put('/delete/:id', 
+  isAuthenticatedUser,
+  reviewController.softDeleteReview
+); 
+
+router.patch('/restore/:id', 
+  isAuthenticatedUser,
+  reviewController.restoreReview
+); 
+
+// Admin-only routes
+router.get('/admin', 
+  isAuthenticatedUser, 
+  authorizeRoles('Admin'), 
+  reviewController.getAllDeletedReviews
+);
 
 module.exports = router;

@@ -124,73 +124,76 @@ $(document).ready(async function () {
             }
 
             // Process and display reviews
-            const html = reviewsRes.data.map(review => {
-                const stars = generateStars(review.rating);
-                const images = Array.isArray(review.images) ? review.images : [];
-                const isDeleted = review.deleted_at !== null;
+           // Process and display reviews
+const html = reviewsRes.data.map(review => {
+    const stars = generateStars(review.rating);
+    const images = Array.isArray(review.images) ? review.images : [];
+    const isDeleted = review.deleted_at !== null;
 
-                return `
-                    <div class="review-card mb-4 p-3 border rounded shadow-sm ${isDeleted ? 'bg-light opacity-75' : ''}">
-                        ${isDeleted ? '<div class="badge bg-warning text-dark mb-2">Deleted</div>' : ''}
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div class="flex-grow-1">
-                                <div class="item-name mb-2">${escapeHtml(review.item_name)}</div>
-                                <div class="rating-display">
-                                    <span class="stars">${stars}</span>
-                                    <span class="badge bg-primary">${review.rating}/5</span>
-                                </div>
-                            </div>
-                            <div class="review-meta text-end">
-                                <small>Order #${review.orderinfo_id}</small><br>
-                                <small>${formatDate(review.created_at)}</small>
-                                ${isDeleted ? `<br><small class="text-muted">Deleted: ${formatDate(review.deleted_at)}</small>` : ''}
-                            </div>
-                        </div>
-                        
-                        ${review.review_text ? `
-                            <div class="review-text">
-                                <i class="fas fa-quote-left text-muted me-2"></i>
-                                ${escapeHtml(review.review_text)}
-                            </div>
-                        ` : ''}
-                        
-                        ${images.length > 0 && !isDeleted ? `
-                            <div class="review-images">
-                                ${images.map(image => `
-                                    <img src="/images/${image}" 
-                                         alt="Review Image" 
-                                         class="review-image"
-                                         onclick="showImageModal('/images/${image}')">
-                                `).join('')}
-                            </div>
-                        ` : ''}
-                        
-                        <div class="mt-3">
-                            ${!isDeleted ? `
-                                <button class="btn btn-sm btn-info edit-review-btn" 
-                                    data-review-id="${review.review_id}" 
-                                    data-review-text="${encodeURIComponent(review.review_text || '')}"
-                                    data-rating="${review.rating}">
-                                    <i class="fas fa-edit"></i> Edit
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-review-btn" 
-                                    data-review-id="${review.review_id}">
-                                    <i class="fas fa-trash"></i> Delete
-                                </button>
-                            ` : `
-                                <button class="btn btn-sm btn-success restore-review-btn" 
-                                    data-review-id="${review.review_id}">
-                                    <i class="fas fa-undo"></i> Restore
-                                </button>
-                                <button class="btn btn-sm btn-danger permanently-delete-btn" 
-                                    data-review-id="${review.review_id}">
-                                    <i class="fas fa-times"></i> Delete Permanently
-                                </button>
-                            `}
-                        </div>
+    return `
+        <div class="review-card mb-4 p-3 border rounded shadow-sm ${isDeleted ? 'bg-light opacity-75' : ''}">
+            ${isDeleted ? '<div class="badge bg-warning text-dark mb-2">Deleted</div>' : ''}
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="flex-grow-1">
+                    <div class="item-name mb-2">${escapeHtml(review.item_name)}</div>
+                    <div class="rating-display">
+                        <span class="stars">${stars}</span>
+                        <span class="badge bg-primary">${review.rating}/5</span>
                     </div>
-                `;
-            }).join('');
+                </div>
+                <div class="review-meta text-end">
+                    <small>Order #${review.orderinfo_id}</small><br>
+                    <small>${formatDate(review.created_at)}</small>
+                    ${isDeleted ? `<br><small class="text-muted">Deleted: ${formatDate(review.deleted_at)}</small>` : ''}
+                </div>
+            </div>
+
+            ${review.review_text ? `
+                <div class="review-text">
+                    <i class="fas fa-quote-left text-muted me-2"></i>
+                    ${escapeHtml(review.review_text)}
+                </div>
+            ` : ''}
+
+            ${images.length > 0 && !isDeleted ? `
+                <div class="review-images">
+                    ${images.map(image => `
+                        <img src="/${image}" 
+                             alt="Review Image" 
+                             class="review-image"
+                             onclick="showImageModal('/${image}')">
+                    `).join('')}
+                </div>
+            ` : ''}
+
+            <div class="mt-3">
+                ${!isDeleted ? `
+                    <button class="btn btn-sm btn-info edit-review-btn" 
+                        data-review-id="${review.review_id}" 
+                        data-review-text="${encodeURIComponent(review.review_text || '')}"
+                        data-rating="${review.rating}">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-review-btn" 
+                        data-review-id="${review.review_id}">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                ` : `
+                    <button class="btn btn-sm btn-success restore-review-btn" 
+                        data-review-id="${review.review_id}">
+                        <i class="fas fa-undo"></i> Restore
+                    </button>
+                    <button class="btn btn-sm btn-danger permanently-delete-btn" 
+                        data-review-id="${review.review_id}">
+                        <i class="fas fa-times"></i> Delete Permanently
+                    </button>
+                `}
+            </div>
+        </div>
+    `;
+}).join('');
+
+
 
             $('#reviewsList').html(html);
 

@@ -24,63 +24,71 @@ const validateReviewData = (data) => {
     return errors.length ? errors : null;
 };
 
-const createReview = async (req, res) => {
-    try {
-        const { orderinfo_id, customer_id, item_id, rating, review_text } = req.body;
-        const imageFiles = req.files || [];
 
-        // Validate input
-        const validationErrors = validateReviewData(req.body);
-        if (validationErrors) {
-            return res.status(400).json({
-                success: false,
-                error: 'Validation failed',
-                details: validationErrors
-            });
-        }
+const createReview = (req, res) => {
+  const { orderinfo_id, item_id, rating, review_text } = req.body;
+  const user_id = req.user.id; // From JWT auth middleware
 
-        // Start transaction
-        await db.promise().beginTransaction();
+  // Step 1: Get customer_id from user_id
+  db.execute(
+    'SELECT customer_id FROM customer WHERE user_id = ?',
+    [user_id],
+    (err, customerRows) => {
+      if (err) {
+        console.error('Database error during customer lookup:', err);
+        return res.status(500).json({ error: 'Database error.' });
+      }
 
-        try {
-            // Create review
-            const [reviewResult] = await db.promise().execute(
-                `INSERT INTO reviews 
-                (orderinfo_id, customer_id, item_id, rating, review_text, created_at)
-                VALUES (?, ?, ?, ?, ?, NOW())`,
-                [orderinfo_id, customer_id, item_id, rating, review_text || null]
+      if (customerRows.length === 0) {
+        return res.status(404).json({ error: 'Customer not found for this user.' });
+      }
+
+      const customer_id = customerRows[0].customer_id;
+
+      // Step 2: Insert review
+      db.execute(
+        `INSERT INTO reviews 
+         (orderinfo_id, customer_id, item_id, rating, review_text, created_at, updated_at) 
+         VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+        [orderinfo_id, customer_id, item_id, rating, review_text],
+        (err, reviewResult) => {
+          if (err) {
+            console.error('Database error during review insert:', err);
+            return res.status(500).json({ error: 'Failed to insert review.' });
+          }
+
+          const review_id = reviewResult.insertId;
+
+          // Step 3: Insert uploaded images (if any)
+            const imagePaths = req.files?.map(file => file.path.replace(/^public[\\/]/, '')) || [];
+
+          if (imagePaths.length === 0) {
+            return res.status(201).json({ message: 'Review created successfully.', review_id });
+          }
+
+          let completed = 0;
+          for (const imagePath of imagePaths) {
+            db.execute(
+              `INSERT INTO review_images (review_id, image_path) VALUES (?, ?)`,
+              [review_id, imagePath],
+              (err) => {
+                if (err) {
+                  console.error('Error inserting review image:', err);
+                }
+                completed++;
+                if (completed === imagePaths.length) {
+                  res.status(201).json({ message: 'Review and images saved successfully.', review_id });
+                }
+              }
             );
-
-            const reviewId = reviewResult.insertId;
-
-            // Handle images if present
-            if (imageFiles.length > 0) {
-                await db.promise().query(
-                    `INSERT INTO review_images (review_id, image_path, created_at) VALUES ?`,
-                    [imageFiles.map(file => [reviewId, file.filename, new Date()])]
-                );
-            }
-
-            // Commit transaction
-            await db.promise().commit();
-
-            return res.status(201).json({ 
-                success: true, 
-                message: imageFiles.length ? 'Review created with images' : 'Review created',
-                reviewId,
-                imageCount: imageFiles.length
-            });
-
-        } catch (err) {
-            // Rollback transaction on error
-            await db.promise().rollback();
-            return handleDbError(res, err, 'review creation');
+          }
         }
-
-    } catch (err) {
-        return handleDbError(res, err, 'review creation');
+      );
     }
+  );
 };
+
+
 
 const getAllReviews = async (req, res) => {
     try {
@@ -264,7 +272,7 @@ const updateReview = async (req, res) => {
         await db.promise().beginTransaction();
 
         try {
-            // Update review
+            // Update review content
             await db.promise().execute(
                 `UPDATE reviews 
                 SET rating = ?, review_text = ?, updated_at = NOW() 
@@ -272,19 +280,26 @@ const updateReview = async (req, res) => {
                 [rating, review_text, reviewId]
             );
 
-            // Handle images if provided
+            // If new images were uploaded
             if (imageFiles.length > 0) {
-                // Delete existing images
+                // Delete old images
                 await db.promise().execute(
                     `DELETE FROM review_images WHERE review_id = ?`,
                     [reviewId]
                 );
 
-                // Insert new images
-                await db.promise().query(
-                    `INSERT INTO review_images (review_id, image_path, created_at) VALUES ?`,
-                    [imageFiles.map(file => [reviewId, file.filename, new Date()])]
-                );
+                // Prepare new image paths (strip "public/" prefix)
+                const imageValues = imageFiles.map(file => {
+                    const cleanPath = file.path.replace(/^public[\\/]/, '');
+                    return [reviewId, cleanPath, new Date()];
+                });
+
+                // Insert new image records
+               await db.promise().query(
+  `INSERT INTO review_images (review_id, image_path, created_at) VALUES ?`,
+  [imageFiles.map(file => [reviewId, `uploads/reviews/${file.filename}`, new Date()])]
+);
+
             }
 
             await db.promise().commit();
@@ -303,6 +318,7 @@ const updateReview = async (req, res) => {
         return handleDbError(res, err, 'updating review');
     }
 };
+
 
 const softDeleteReview = async (req, res) => {
     try {
