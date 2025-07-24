@@ -194,7 +194,6 @@ $(document).ready(function () {
                 <tr ${review.deleted_at ? 'class="deleted-row"' : ''} data-customer-id="${review.customer_id}">
                     <td>${review.review_id}</td>
                     <td>${review.orderinfo_id}</td>
-                    <td>${review.customer_first_name} ${review.customer_last_name}</td>
                     <td>${review.item_name}</td>
                     <td>${generateStarRating(review.rating)}</td>
                     <td>${review.review_text}</td>

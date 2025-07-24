@@ -21,44 +21,383 @@
       referrerpolicy="no-referrer"
     />
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+      :root {
+        --primary-purple: #8b5cf6;
+        --dark-purple: #6d28d9;
+        --light-purple: #a78bfa;
+        --accent-blue: #3b82f6;
+        --light-blue: #60a5fa;
+        --dark-bg: #0f0f23;
+        --card-bg: #1e1b4b;
+        --text-white: #ffffff;
+        --text-gray: #ffffff;
+        --text-light-gray: #cbd5e1;
+        --border-color: rgba(139, 92, 246, 0.3);
+        --card-shadow: 0 10px 40px rgba(139, 92, 246, 0.1);
+        --card-shadow-hover: 0 20px 60px rgba(139, 92, 246, 0.2);
+        --glass-bg: rgba(30, 27, 75, 0.9);
+        --glass-border: rgba(139, 92, 246, 0.3);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
       body {
-        background-color: #f8f9fa;
-        padding: 20px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, var(--dark-bg) 0%, #1e1b4b 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+        color: var(--text-white);
+        padding-top: 70px; /* Add padding to account for fixed header */
       }
+
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: 
+          radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 40% 40%, rgba(167, 139, 250, 0.05) 0%, transparent 50%);
+        z-index: -1;
+        animation: float 20s ease-in-out infinite;
+      }
+
+      @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(2deg); }
+      }
+
+      @keyframes slideInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* Admin Header - Fixed at top */
+      #adminHeader {
+        height: 70px;
+        background: rgba(30, 27, 75, 0.95);
+        border-bottom: 1px solid var(--border-color);
+        backdrop-filter: blur(20px);
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.1);
+      }
+
+      .container-fluid {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        animation: fadeIn 1s ease-out;
+      }
+
       .dashboard-header {
-        margin-bottom: 30px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 40px 20px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        border: 1px solid var(--glass-border);
+        box-shadow: var(--card-shadow);
+        animation: slideInUp 0.8s ease-out;
       }
-      .chart-container {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        padding: 20px;
-        margin-bottom: 30px;
+
+      .dashboard-header h1 {
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-purple), var(--accent-blue));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 15px;
+        letter-spacing: 0.05em;
       }
-      .chart-title {
+
+      .dashboard-header p {
         font-size: 1.2rem;
-        font-weight: 600;
-        margin-bottom: 20px;
-        color: #343a40;
+        color: var(--text-light-gray);
+        font-weight: 400;
+        letter-spacing: 0.5px;
       }
+
+      .chart-container {
+        background: var(--card-bg);
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--card-shadow);
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+        animation: scaleIn 0.6s ease-out;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .chart-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(135deg, var(--primary-purple), var(--accent-blue));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .chart-container:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--card-shadow-hover);
+        border-color: var(--primary-purple);
+      }
+
+      .chart-container:hover::before {
+        opacity: 1;
+      }
+
+      .row:nth-child(2) .col-md-6:first-child .chart-container::before {
+        background: linear-gradient(135deg, var(--primary-purple), var(--light-purple));
+      }
+
+      .row:nth-child(2) .col-md-6:last-child .chart-container::before {
+        background: linear-gradient(135deg, var(--accent-blue), var(--light-blue));
+      }
+
+      .row:nth-child(3) .chart-container::before {
+        background: linear-gradient(135deg, var(--light-purple), var(--primary-purple));
+      }
+
+      .chart-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 25px;
+        color: var(--text-white);
+        position: relative;
+        padding-left: 15px;
+      }
+
+      .chart-title::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(135deg, var(--primary-purple), var(--accent-blue));
+        border-radius: 2px;
+      }
+
       .chart-wrapper {
         position: relative;
         height: 40vh;
         width: 100%;
+        min-height: 300px;
+        background: rgba(15, 15, 35, 0.3);
+        border-radius: 15px;
+        border: 1px dashed var(--border-color);
+      }
+
+      .chart-placeholder {
+        display: none;
+      }
+
+      /* Stats Cards */
+      .stats-row {
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: var(--card-bg);
+        border-radius: 15px;
+        border: 1px solid var(--border-color);
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s ease;
+        animation: slideInUp 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, transparent 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(139, 92, 246, 0.2);
+        border-color: var(--primary-purple);
+      }
+
+      .stat-card:hover::before {
+        opacity: 1;
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-white);
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        color: var(--text-light-gray);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        body {
+          padding-top: 60px; /* Reduced padding for mobile */
+        }
+
+        #adminHeader {
+          height: 60px;
+        }
+
+        .dashboard-header h1 {
+          font-size: 2rem;
+        }
+        
+        .dashboard-header p {
+          font-size: 1rem;
+        }
+        
+        .chart-wrapper {
+          height: 300px;
+        }
+        
+        .container-fluid {
+          padding: 10px;
+        }
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: rgba(30, 27, 75, 0.3);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--primary-purple);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--light-purple);
+      }
+
+      /* Canvas and Chart Text styling for better visibility */
+      canvas {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 8px;
+      }
+
+      /* Chart.js text color overrides */
+      .chart-container canvas {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+
+      /* Global Chart.js styling */
+      .chartjs-render-monitor {
+        color: rgba(255, 255, 255, 0.9) !important;
+      }
+
+      /* SweetAlert2 dark theme override */
+      .swal2-popup {
+        background: var(--card-bg) !important;
+        color: var(--text-white) !important;
+        border: 1px solid var(--border-color) !important;
+      }
+
+      .swal2-title {
+        color: var(--text-white) !important;
+      }
+
+      .swal2-content {
+        color: var(--text-light-gray) !important;
+      }
+
+      .swal2-confirm {
+        background: var(--primary-purple) !important;
+        border: none !important;
+      }
+
+      .swal2-cancel {
+        background: var(--accent-blue) !important;
+        border: none !important;
       }
     </style>
 
-    <title>Dashboard</title>
+    <title>ROMEROS KINGDOM - Analytics Dashboard</title>
   </head>
   <body>
-    <div id="adminHeader"></div>
+    <div id="adminHeader">
+      <!-- Admin header content goes here -->
+      <span style="color: var(--text-white); font-weight: 600; font-size: 1.1rem;">ROMEROS KINGDOM - Admin Panel</span>
+    </div>
+    
     <div class="container-fluid">
       <div class="dashboard-header">
-        <h1 class="display-4">Analytics Dashboard</h1>
-        <p class="lead">Visualization of key metrics and performance indicators</p>
+        <h1 class="display-4">ROMEROS KINGDOM</h1>
+        <p class="lead">Analytics Dashboard</p>
       </div>
 
       <div class="row">
@@ -118,27 +457,57 @@
       referrerpolicy="no-referrer"
     ></script>
 
-      <!-- JavaScript Libraries -->
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"
-  integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
-  integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-  crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-  integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-  crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"
-  integrity="sha512-LGHBR+kJ5jZSIzhhdfytPoEHzgaYuTRifq9g5l6ja6/k9NAOsAi5dQh4zQF6JIRB8cAYxTRedERUF+97/KuivQ=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"
-  integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg=="
-  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Additional JavaScript Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.5.2/bootbox.min.js"
+      integrity="sha512-RdSPYh1WA6BF0RhpisYJVYkOyTzK4HwofJ3Q7ivt/jkpW6Vc8AurL1R+4AUcvn9IwEKAPm/fk7qFZW3OuiUDeg=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Chart.js global configuration for better text visibility and positioning
+      Chart.defaults.color = 'rgba(255, 255, 255, 0.9)';
+      Chart.defaults.borderColor = 'rgba(139, 92, 246, 0.3)';
+      Chart.defaults.backgroundColor = 'rgba(139, 92, 246, 0.1)';
+      
+      // Configure responsive text sizing and positioning
+      Chart.defaults.font.family = 'Inter, sans-serif';
+      Chart.defaults.font.size = 12;
+      Chart.defaults.font.weight = '500';
+      
+      // Configure legend positioning to prevent overflow
+      Chart.defaults.plugins.legend.position = 'bottom';
+      Chart.defaults.plugins.legend.labels.usePointStyle = true;
+      Chart.defaults.plugins.legend.labels.padding = 20;
+      Chart.defaults.plugins.legend.labels.boxWidth = 12;
+      Chart.defaults.plugins.legend.labels.boxHeight = 12;
+      
+      // Configure tooltip styling
+      Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(30, 27, 75, 0.95)';
+      Chart.defaults.plugins.tooltip.titleColor = 'rgba(255, 255, 255, 0.9)';
+      Chart.defaults.plugins.tooltip.bodyColor = 'rgba(255, 255, 255, 0.8)';
+      Chart.defaults.plugins.tooltip.borderColor = 'rgba(139, 92, 246, 0.5)';
+      Chart.defaults.plugins.tooltip.borderWidth = 1;
+      
+      // Configure scales for better text visibility
+      Chart.defaults.scales.linear.ticks.color = 'rgba(255, 255, 255, 0.8)';
+      Chart.defaults.scales.category.ticks.color = 'rgba(255, 255, 255, 0.8)';
+      Chart.defaults.scales.linear.grid.color = 'rgba(139, 92, 246, 0.2)';
+      Chart.defaults.scales.category.grid.color = 'rgba(139, 92, 246, 0.2)';
+      
+      // Ensure responsive sizing and prevent text overflow
+      Chart.defaults.responsive = true;
+      Chart.defaults.maintainAspectRatio = false;
+      Chart.defaults.layout.padding = {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+      };
+    </script>
     <script src="js/chart.js"></script>
   </body>
 </html>

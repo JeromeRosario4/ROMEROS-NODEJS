@@ -53,7 +53,7 @@ $(document).ready(function () {
 
         storeUserData(res);
         
-        showLoginMessage('✅ Login successful! Redirecting...', 'success');
+        showLoginMessage('✅ Login successful!', 'success');
         
         // Check if user is Admin - redirect immediately for Admin users
         if (res.user.role === 'Admin') {

@@ -36,7 +36,7 @@ $(document).ready(function () {
 
   const baseUrl = 'http://localhost:3000/api/item/admin';
   const categoryUrl = 'http://localhost:3000/api/category';
-  const imageBaseUrl = 'http://localhost:3000/images/';
+  const imageBaseUrl = 'http://localhost:3000/uploads/reviews/';
   let currentViewMode = 'pagination';
   let currentPage = 1;
   let itemsPerPage = 10;
