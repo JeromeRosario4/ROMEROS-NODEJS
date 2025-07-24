@@ -486,6 +486,79 @@
     .text-warning {
       color: #ffc107 !important;
     }
+    
+    /* Review Images Styles */
+    .review-images-container {
+      margin-top: 10px;
+    }
+
+    .review-images-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .review-image-thumbnail {
+      width: 80px;
+      height: 80px;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s ease;
+    }
+
+    .review-image-thumbnail:hover {
+      transform: scale(1.05);
+      border-color: var(--light-purple);
+    }
+
+    .review-image-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .review-image-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .review-image-modal.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .review-image-modal-content {
+      max-width: 90%;
+      max-height: 90%;
+    }
+
+    .review-image-modal-content img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+    }
+
+    .review-image-modal-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: white;
+      font-size: 2rem;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -575,6 +648,14 @@
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Review Image Modal (for enlarged view) -->
+  <div class="review-image-modal" id="reviewImageModal">
+    <span class="review-image-modal-close">&times;</span>
+    <div class="review-image-modal-content">
+      <img id="enlargedReviewImage" src="" alt="Enlarged review image">
     </div>
   </div>
 
@@ -750,100 +831,117 @@
         }
       }
 
-      // Function to get product images (simulated - you'll need to modify based on your API)
-      function getProductImages(productId, mainImage) {
-        // For now, we'll simulate multiple images by using the main image and placeholder variations
-        // In a real implementation, you'd fetch this from your API
-        const images = [mainImage];
-        
-        // Add placeholder variations (you should replace this with actual API call)
-        for (let i = 2; i <= 3; i++) {
-          images.push(`${productId}_${i}.jpg`);
-        }
-        
-        return images;
+      // Function to load reviews for a specific product
+      function loadReviews(itemId) {
+        $.ajax({
+          method: "GET",
+          url: `${url}api/reviews`,
+          data: { item_id: itemId },
+          dataType: 'json',
+          success: function (response) {
+            console.log("Reviews API Response:", response);
+            $('#productReviews').empty();
+            
+            if (response.data && Array.isArray(response.data)) {
+              if (response.data.length > 0) {
+                $('#noReviewsMessage').hide();
+                
+                // Process each review
+                $.each(response.data, function (key, review) {
+                  try {
+                    // Only show reviews that match the current item_id
+                    if (review.item_id == itemId) {
+                      const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      });
+                      
+                      // Create review card
+                      let reviewElement = `
+                        <div class="card review-card mb-3">
+                          <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                              <div>
+                                <span class="review-author">${review.customer_name || 'Anonymous'}</span>
+                                <div class="rating">
+                                  ${getStarRating(review.rating)}
+                                </div>
+                              </div>
+                              <span class="review-date">${reviewDate}</span>
+                            </div>
+                            <div class="review-text">
+                              ${review.review_text ? `<p>${review.review_text}</p>` : '<p class="text-muted">No review text provided</p>'}
+                            </div>
+                            <div class="review-images-container" data-review-id="${review.review_id}">
+                              <!-- Images will be loaded here by fetchReviewImages -->
+                            </div>
+                          </div>
+                        </div>
+                      `;
+                      
+                      $('#productReviews').append(reviewElement);
+                      
+                      // Now fetch images for this review
+                      fetchReviewImages(review.review_id);
+                    }
+                  } catch (e) {
+                    console.error("Error processing review:", review, e);
+                  }
+                });
+              } else {
+                $('#noReviewsMessage').show();
+              }
+            } else {
+              console.error("Unexpected reviews response format:", response);
+              $('#noReviewsMessage').show().text("Error loading reviews. Invalid data format.");
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error loading reviews:", error);
+            $('#noReviewsMessage').show().text("Error loading reviews. Please try again later.");
+          }
+        });
       }
 
-      function loadItems() {
-  $.ajax({
-    url: 'http://localhost:3000/api/item',
-    method: 'GET',
-    success: function (data) {
-      let html = '';
-
-      data.rows.forEach((value, index) => {
-        // this is where you build HTML for each product
-      });
-
-      $('#item-list').html(html);
-    },
-    error: function (err) {
-      console.error(err);
-    }
-  });
-}
-
-      // Function to load reviews for a product
-      function loadReviews(itemId) {
-  $.ajax({
-    method: "GET",
-    url: `${url}api/reviews`,
-    data: { item_id: itemId },
-    dataType: 'json',
-    success: function (response) {
-      console.log("Reviews API Response:", response);
-      $('#productReviews').empty();
-      
-      // Check if response has reviews array
-      if (response.data && Array.isArray(response.data)) {
-        if (response.data.length > 0) {
-          $('#noReviewsMessage').hide();
-          
-          $.each(response.data, function (key, review) {
-            try {
-              const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+      // Function to fetch images for a specific review
+      function fetchReviewImages(reviewId) {
+        $.ajax({
+          method: "GET",
+          url: `${url}api/review-images`,
+          data: { review_id: reviewId },
+          dataType: 'json',
+          success: function(response) {
+            if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+              const $container = $(`.review-images-container[data-review-id="${reviewId}"]`);
+              let imagesHTML = '<div class="review-images-row">';
+              
+              $.each(response.data, function(index, image) {
+                imagesHTML += `
+                  <div class="review-image-thumbnail" data-image-src="${imageBaseUrl}${image.image_path}">
+                    <img src="${imageBaseUrl}${image.image_path}" 
+                         alt="Review image ${index + 1}" 
+                         onerror="this.src='${imageBaseUrl}placeholder.jpg'; this.onerror=null;">
+                  </div>
+                `;
               });
               
-              const reviewElement = `
-                <div class="card review-card mb-3">
-                  <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <div>
-                        <span class="review-author">${review.customer_name || 'Anonymous'}</span>
-                        <div class="rating">
-                          ${getStarRating(review.rating)}
-                        </div>
-                      </div>
-                      <span class="review-date">${reviewDate}</span>
-                    </div>
-                    <div class="review-text">
-                      ${review.review_text ? `<p>${review.review_text}</p>` : '<p class="text-muted">No review text provided</p>'}
-                    </div>
-                  </div>
-                </div>
-              `;
-              $('#productReviews').append(reviewElement);
-            } catch (e) {
-              console.error("Error processing review:", review, e);
+              imagesHTML += '</div>';
+              $container.html(imagesHTML);
+              
+              // Add click handler for thumbnail images
+              $container.find('.review-image-thumbnail').click(function() {
+                const imageSrc = $(this).data('image-src');
+                $('#enlargedReviewImage').attr('src', imageSrc);
+                $('#reviewImageModal').addClass('active');
+              });
             }
-          });
-        } else {
-          $('#noReviewsMessage').show();
-        }
-      } else {
-        console.error("Unexpected reviews response format:", response);
-        $('#noReviewsMessage').show().text("Error loading reviews. Invalid data format.");
+          },
+          error: function(xhr, status, error) {
+            console.error("Error loading review images:", error);
+          }
+        });
       }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error loading reviews:", error);
-      $('#noReviewsMessage').show().text("Error loading reviews. Please try again later.");
-    }
-  });
-}
 
       // Helper function to generate star rating
       function getStarRating(rating) {
@@ -861,36 +959,34 @@
 
       // Load categories
       function loadCategories() {
-  $.ajax({
-    method: "GET",
-    url: `${url}api/category`,
-    dataType: 'json',
-    success: function (response) {  // Changed from 'data' to 'response' for consistency
-      $('#categoryFilter').empty();
-      $('#categoryFilter').append(`
-        <button class="category-btn active" data-category="all">All Categories</button>
-      `);
-      
-      // Check if response has 'rows' property and it's an array
-      if (response.data && Array.isArray(response.data)) {
-        $.each(response.data, function (key, category) {
-          $('#categoryFilter').append(`
-            <button class="category-btn" data-category="${category.category_id}">
-              ${category.description || 'Unnamed Category'}
-            </button>
-          `);
+        $.ajax({
+          method: "GET",
+          url: `${url}api/category`,
+          dataType: 'json',
+          success: function (response) {
+            $('#categoryFilter').empty();
+            $('#categoryFilter').append(`
+              <button class="category-btn active" data-category="all">All Categories</button>
+            `);
+            
+            if (response.data && Array.isArray(response.data)) {
+              $.each(response.data, function (key, category) {
+                $('#categoryFilter').append(`
+                  <button class="category-btn" data-category="${category.category_id}">
+                    ${category.description || 'Unnamed Category'}
+                  </button>
+                `);
+              });
+            } else {
+              console.error("Unexpected categories response format:", response);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Error loading categories:", error);
+            $('#categoryFilter').html('<p class="text-danger">Failed to load categories. Please try again later.</p>');
+          }
         });
-      } else {
-        console.error("Unexpected categories response format:", response);
       }
-    },
-    error: function (xhr, status, error) {
-      console.error("Error loading categories:", error);
-      // Optionally show error message to user
-      $('#categoryFilter').html('<p class="text-danger">Failed to load categories. Please try again later.</p>');
-    }
-  });
-}
 
       // Load items with category filtering
       function loadItems(category = 'all') {
@@ -908,7 +1004,6 @@
 
               $.each(data.rows, function (key, value) {
                   const productImages = value.images && value.images.length > 0 ? value.images : [value.image];
-
                   
                   const itemCard = `
                   <div class="product-card" data-id="${value.item_id}">
@@ -1007,7 +1102,7 @@
         const $modal = $('#productDetailsModal');
         modalGallery = new ImageGallery($modal, images, true);
         
-        // Load reviews for this product
+        // Load reviews for this specific product
         loadReviews(id);
 
         productModal.show();
@@ -1044,53 +1139,6 @@
             price,
             image,
             stock,
-            quantity: qty
-          });
-        }
-
-        saveCart(cart);
-        itemCount = cart.reduce((total, item) => total + item.quantity, 0);
-        $('#itemCount').text(itemCount).css('display', 'block');
-        alert(`${name} added to cart!`);
-        productModal.hide();
-      });
-
-      // Add to cart from grid
-      $(document).on('click', '.add-to-cart', function (e) {
-        e.stopPropagation();
-        
-        if (!isUserLoggedIn()) {
-          alert('Please sign in to add items to your cart');
-          window.location.href = 'login.html';
-          return;
-        }
-
-        const $productCard = $(this).closest('.product-card');
-        const qty = parseInt($productCard.find('.quantity-input').val());
-        const id = $(this).data('id');
-        const name = $(this).data('name');
-        const price = parseFloat($(this).data('price'));
-        const image = $(this).data('image');
-        const stock = parseInt($(this).data('stock'));
-        const category = $(this).data('category');
-
-        let cart = getCart();
-        let existing = cart.find(item => item.item_id == id);
-
-        if (existing) {
-          if ((existing.quantity + qty) > stock) {
-            alert(`You can't add more than available stock (${stock})`);
-            return;
-          }
-          existing.quantity += qty;
-        } else {
-          cart.push({
-            item_id: id,
-            name,
-            price,
-            image,
-            stock,
-            category,
             quantity: qty
           });
         }
