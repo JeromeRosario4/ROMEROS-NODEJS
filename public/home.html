@@ -785,55 +785,65 @@
 
       // Function to load reviews for a product
       function loadReviews(itemId) {
-        $.ajax({
-          method: "GET",
-          url: `${url}api/reviews`,
-          data: { item_id: itemId },
-          dataType: 'json',
-          success: function (response) {
-            console.log("Reviews API Response:", response);
-            $('#productReviews').empty();
-            
-            if (response.reviews && response.reviews.length > 0) {
-              $('#noReviewsMessage').hide();
+  $.ajax({
+    method: "GET",
+    url: `${url}api/reviews`,
+    data: { item_id: itemId },
+    dataType: 'json',
+    success: function (response) {
+      console.log("Reviews API Response:", response);
+      $('#productReviews').empty();
+      
+      // Check if response has reviews array
+      if (response.data && Array.isArray(response.data)) {
+        if (response.data.length > 0) {
+          $('#noReviewsMessage').hide();
+          
+          $.each(response.data, function (key, review) {
+            try {
+              const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              });
               
-              $.each(response.reviews, function (key, review) {
-                const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                });
-                
-                const reviewElement = `
-                  <div class="card review-card mb-3">
-                    <div class="card-body">
-                      <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div>
-                          <span class="review-author">${review.customer_name || 'Anonymous'}</span>
-                          <div class="rating">
-                            ${getStarRating(review.rating)}
-                          </div>
+              const reviewElement = `
+                <div class="card review-card mb-3">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <div>
+                        <span class="review-author">${review.customer_name || 'Anonymous'}</span>
+                        <div class="rating">
+                          ${getStarRating(review.rating)}
                         </div>
-                        <span class="review-date">${reviewDate}</span>
                       </div>
-                      <div class="review-text">
-                        ${review.review_text ? `<p>${review.review_text}</p>` : '<p class="text-muted">No review text provided</p>'}
-                      </div>
+                      <span class="review-date">${reviewDate}</span>
+                    </div>
+                    <div class="review-text">
+                      ${review.review_text ? `<p>${review.review_text}</p>` : '<p class="text-muted">No review text provided</p>'}
                     </div>
                   </div>
-                `;
-                $('#productReviews').append(reviewElement);
-              });
-            } else {
-              $('#noReviewsMessage').show();
+                </div>
+              `;
+              $('#productReviews').append(reviewElement);
+            } catch (e) {
+              console.error("Error processing review:", review, e);
             }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error loading reviews:", error);
-            $('#noReviewsMessage').show().text("Error loading reviews. Please try again later.");
-          }
-        });
+          });
+        } else {
+          $('#noReviewsMessage').show();
+        }
+      } else {
+        console.error("Unexpected reviews response format:", response);
+        $('#noReviewsMessage').show().text("Error loading reviews. Invalid data format.");
       }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error loading reviews:", error);
+      $('#noReviewsMessage').show().text("Error loading reviews. Please try again later.");
+    }
+  });
+}
 
       // Helper function to generate star rating
       function getStarRating(rating) {
@@ -851,27 +861,36 @@
 
       // Load categories
       function loadCategories() {
-        $.ajax({
-          method: "GET",
-          url: `${url}api/category`,
-          dataType: 'json',
-          success: function (data) {
-            $('#categoryFilter').empty();
-            $('#categoryFilter').append(`
-              <button class="category-btn active" data-category="all">All Categories</button>
-            `);
-            
-            $.each(data.rows, function (key, value) {
-              $('#categoryFilter').append(`
-                <button class="category-btn" data-category="${value.category_id}">${value.description}</button>
-              `);
-            });
-          },
-          error: function (error) {
-            console.log(error);
-          }
+  $.ajax({
+    method: "GET",
+    url: `${url}api/category`,
+    dataType: 'json',
+    success: function (response) {  // Changed from 'data' to 'response' for consistency
+      $('#categoryFilter').empty();
+      $('#categoryFilter').append(`
+        <button class="category-btn active" data-category="all">All Categories</button>
+      `);
+      
+      // Check if response has 'rows' property and it's an array
+      if (response.data && Array.isArray(response.data)) {
+        $.each(response.data, function (key, category) {
+          $('#categoryFilter').append(`
+            <button class="category-btn" data-category="${category.category_id}">
+              ${category.description || 'Unnamed Category'}
+            </button>
+          `);
         });
+      } else {
+        console.error("Unexpected categories response format:", response);
       }
+    },
+    error: function (xhr, status, error) {
+      console.error("Error loading categories:", error);
+      // Optionally show error message to user
+      $('#categoryFilter').html('<p class="text-danger">Failed to load categories. Please try again later.</p>');
+    }
+  });
+}
 
       // Load items with category filtering
       function loadItems(category = 'all') {

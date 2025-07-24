@@ -3,6 +3,7 @@ const router = express.Router();
 const categoryController = require('../controllers/category');
 const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 
+router.get('/', categoryController.getAllCategories);
 router.get('/admin/all', categoryController.getAllCategoriesWithDeleted);
 
 router.get('/', isAuthenticatedUser, authorizeRoles('Admin'), categoryController.getAllCategories);
@@ -13,3 +14,4 @@ router.put('/:id', isAuthenticatedUser, authorizeRoles('Admin'), categoryControl
 router.delete('/:id', isAuthenticatedUser, authorizeRoles('Admin'), categoryController.deleteCategory);
 
 module.exports = router;
+

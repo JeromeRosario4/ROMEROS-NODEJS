@@ -83,7 +83,7 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center">
-                                <img src="/uploads/${item.image_path || 'default.jpg'}" 
+                                <img src="/uploads/reviews/${item.image_path || 'default.jpg'}" 
                                      alt="${item.name}" 
                                      class="cart-item-image me-3 rounded"
                                      onerror="this.src='/uploads/default.jpg'">
