@@ -35,7 +35,6 @@ exports.salesChart = (req, res) => {
         console.log(error)
     }
 
-
 };
 
 exports.itemsChart = (req, res) => {
