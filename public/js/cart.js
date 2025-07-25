@@ -86,7 +86,7 @@
                                 <img src="/uploads/reviews/${item.image_path || 'default.jpg'}" 
                                      alt="${item.name}" 
                                      class="cart-item-image me-3 rounded"
-                                     onerror="this.src='/uploads/default.jpg'">
+                                     onerror="this.src='/uploads/reviews/default.jpg'">
                                 <div>
                                     <h6 class="mb-0">${item.name}</h6>
                                     <small class="text-muted">${item.description || ''}</small>

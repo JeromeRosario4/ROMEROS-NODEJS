@@ -486,79 +486,24 @@
     .text-warning {
       color: #ffc107 !important;
     }
-    
-    /* Review Images Styles */
     .review-images-container {
-      margin-top: 10px;
-    }
+    margin-top: 10px;
+  }
 
-    .review-images-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
+.review-image-thumbnail {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
 
-    .review-image-thumbnail {
-      width: 80px;
-      height: 80px;
-      border-radius: 6px;
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-      transition: transform 0.2s ease;
-    }
+.review-image-thumbnail:hover {
+    transform: scale(1.05);
+}
 
-    .review-image-thumbnail:hover {
-      transform: scale(1.05);
-      border-color: var(--light-purple);
-    }
-
-    .review-image-thumbnail img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .review-image-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    .review-image-modal.active {
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    .review-image-modal-content {
-      max-width: 90%;
-      max-height: 90%;
-    }
-
-    .review-image-modal-content img {
-      max-width: 100%;
-      max-height: 90vh;
-      object-fit: contain;
-    }
-
-    .review-image-modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      color: white;
-      font-size: 2rem;
-      cursor: pointer;
-    }
+.img-thumbnail {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    background-color: rgba(30, 27, 75, 0.5);
+}
   </style>
 </head>
 
@@ -648,14 +593,6 @@
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- Review Image Modal (for enlarged view) -->
-  <div class="review-image-modal" id="reviewImageModal">
-    <span class="review-image-modal-close">&times;</span>
-    <div class="review-image-modal-content">
-      <img id="enlargedReviewImage" src="" alt="Enlarged review image">
     </div>
   </div>
 
@@ -833,339 +770,427 @@
 
       // Function to load reviews for a specific product
       function loadReviews(itemId) {
-        $.ajax({
-          method: "GET",
-          url: `${url}api/reviews`,
-          data: { item_id: itemId },
-          dataType: 'json',
-          success: function (response) {
-            console.log("Reviews API Response:", response);
-            $('#productReviews').empty();
-            
-            if (response.data && Array.isArray(response.data)) {
-              if (response.data.length > 0) {
-                $('#noReviewsMessage').hide();
-                
-                // Process each review
-                $.each(response.data, function (key, review) {
-                  try {
-                    // Only show reviews that match the current item_id
-                    if (review.item_id == itemId) {
-                      const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      });
-                      
-                      // Create review card
-                      let reviewElement = `
-                        <div class="card review-card mb-3">
-                          <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                              <div>
-                                <span class="review-author">${review.customer_name || 'Anonymous'}</span>
-                                <div class="rating">
-                                  ${getStarRating(review.rating)}
-                                </div>
-                              </div>
-                              <span class="review-date">${reviewDate}</span>
-                            </div>
-                            <div class="review-text">
-                              ${review.review_text ? `<p>${review.review_text}</p>` : '<p class="text-muted">No review text provided</p>'}
-                            </div>
-                            <div class="review-images-container" data-review-id="${review.review_id}">
-                              <!-- Images will be loaded here by fetchReviewImages -->
-                            </div>
-                          </div>
-                        </div>
-                      `;
-                      
-                      $('#productReviews').append(reviewElement);
-                      
-                      // Now fetch images for this review
-                      fetchReviewImages(review.review_id);
-                    }
-                  } catch (e) {
-                    console.error("Error processing review:", review, e);
+          $.ajax({
+              method: "GET",
+              url: `${url}api/reviews`,
+              data: { item_id: itemId },
+              dataType: 'json',
+              success: function (response) {
+                  console.log("Reviews API Response:", response);
+                  $('#productReviews').empty();
+                  
+                  if (response.data && Array.isArray(response.data)) {
+                      if (response.data.length > 0) {
+                          $('#noReviewsMessage').hide();
+                          
+                          // First get all reviews, then fetch images for each
+                          $.each(response.data, function (key, review) {
+                              try {
+                                  // Only show reviews that match the current item_id
+                                  if (review.item_id == itemId) {
+                                      const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
+                                          year: 'numeric',
+                                          month: 'long',
+                                          day: 'numeric'
+                                      });
+                                      
+                                      // Start building the review element
+                                      let reviewElement = `
+                                          <div class="card review-card mb-3">
+                                              <div class="card-body">
+                                                  <div class="d-flex justify-content-between align-items-center mb-2">
+                                                      <div>
+                                                          <span class="review-author">${review.customer_name || 'Anonymous'}</span>
+                                                          <div class="rating">
+                                                              ${getStarRating(review.rating)}
+                                                          </div>
+                                                      </div>
+                                                      <span class="review-date">${reviewDate}</span>
+                                                  </div>
+                                                  <div class="review-text">
+                                                      ${review.review_text ? `<p>${review.review_text}</p>` : '<p class="text-muted">No review text provided</p>'}
+                                                  </div>
+                                      `;
+
+                                      // Add a placeholder for images (we'll fetch them next)
+                                      reviewElement += `
+                                          <div class="review-images-container mt-3" data-review-id="${review.review_id}">
+                                              <!-- Images will be loaded here -->
+                                          </div>
+                                      `;
+
+                                      reviewElement += `
+                                              </div>
+                                          </div>
+                                      `;
+                                      
+                                      $('#productReviews').append(reviewElement);
+                                      
+                                      // Now fetch images for this review
+                                      fetchReviewImages(review.review_id);
+                                  }
+                              } catch (e) {
+                                  console.error("Error processing review:", review, e);
+                              }
+                          });
+                      } else {
+                          $('#noReviewsMessage').show();
+                      }
+                  } else {
+                      console.error("Unexpected reviews response format:", response);
+                      $('#noReviewsMessage').show().text("Error loading reviews. Invalid data format.");
                   }
-                });
-              } else {
-                $('#noReviewsMessage').show();
+              },
+              error: function (xhr, status, error) {
+                  console.error("Error loading reviews:", error);
+                  $('#noReviewsMessage').show().text("Error loading reviews. Please try again later.");
               }
-            } else {
-              console.error("Unexpected reviews response format:", response);
-              $('#noReviewsMessage').show().text("Error loading reviews. Invalid data format.");
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error loading reviews:", error);
-            $('#noReviewsMessage').show().text("Error loading reviews. Please try again later.");
-          }
-        });
+          });
       }
 
       // Function to fetch images for a specific review
       function fetchReviewImages(reviewId) {
-        $.ajax({
-          method: "GET",
-          url: `${url}api/review-images`,
-          data: { review_id: reviewId },
-          dataType: 'json',
-          success: function(response) {
-            if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-              const $container = $(`.review-images-container[data-review-id="${reviewId}"]`);
-              let imagesHTML = '<div class="review-images-row">';
-              
-              $.each(response.data, function(index, image) {
-                imagesHTML += `
-                  <div class="review-image-thumbnail" data-image-src="${imageBaseUrl}${image.image_path}">
-                    <img src="${imageBaseUrl}${image.image_path}" 
-                         alt="Review image ${index + 1}" 
-                         onerror="this.src='${imageBaseUrl}placeholder.jpg'; this.onerror=null;">
-                  </div>
-                `;
-              });
-              
-              imagesHTML += '</div>';
-              $container.html(imagesHTML);
-              
-              // Add click handler for thumbnail images
-              $container.find('.review-image-thumbnail').click(function() {
-                const imageSrc = $(this).data('image-src');
-                $('#enlargedReviewImage').attr('src', imageSrc);
-                $('#reviewImageModal').addClass('active');
-              });
-            }
-          },
-          error: function(xhr, status, error) {
-            console.error("Error loading review images:", error);
-          }
-        });
+          $.ajax({
+              method: "GET",
+              url: `${url}api/review-images`,
+              data: { review_id: reviewId },
+              dataType: 'json',
+              success: function(response) {
+                  if (response.data && Array.isArray(response.data) && response.data.length > 0) {
+                      const $container = $(`.review-images-container[data-review-id="${reviewId}"]`);
+                      let imagesHTML = '<div class="d-flex flex-wrap gap-2">';
+                      
+                      $.each(response.data, function(index, image) {
+                          imagesHTML += `
+                              <a href="${imageBaseUrl}${image.image_path}" target="_blank" class="review-image-thumbnail">
+                                  <img src="${imageBaseUrl}${image.image_path}" 
+                                       alt="Review image ${index + 1}" 
+                                       class="img-thumbnail" 
+                                       style="width: 80px; height: 80px; object-fit: cover;"
+                                       onerror="this.src='${imageBaseUrl}placeholder.jpg'; this.onerror=null;">
+                              </a>
+                          `;
+                      });
+                      
+                      imagesHTML += '</div>';
+                      $container.html(imagesHTML);
+                  }
+              },
+              error: function(xhr, status, error) {
+                  console.error("Error loading review images:", error);
+              }
+          });
       }
 
       // Helper function to generate star rating
       function getStarRating(rating) {
-        if (!rating) return '';
-        let stars = '';
-        for (let i = 1; i <= 5; i++) {
-          if (i <= rating) {
-            stars += '<i class="fas fa-star text-warning"></i>';
-          } else {
-            stars += '<i class="far fa-star text-warning"></i>';
+          if (!rating) return '';
+          let stars = '';
+          for (let i = 1; i <= 5; i++) {
+              if (i <= rating) {
+                  stars += '<i class="fas fa-star text-warning"></i>';
+              } else {
+                  stars += '<i class="far fa-star text-warning"></i>';
+              }
           }
-        }
-        return stars;
+          return stars;
       }
 
       // Load categories
       function loadCategories() {
-        $.ajax({
-          method: "GET",
-          url: `${url}api/category`,
-          dataType: 'json',
-          success: function (response) {
-            $('#categoryFilter').empty();
-            $('#categoryFilter').append(`
-              <button class="category-btn active" data-category="all">All Categories</button>
-            `);
-            
-            if (response.data && Array.isArray(response.data)) {
-              $.each(response.data, function (key, category) {
-                $('#categoryFilter').append(`
-                  <button class="category-btn" data-category="${category.category_id}">
-                    ${category.description || 'Unnamed Category'}
-                  </button>
-                `);
-              });
-            } else {
-              console.error("Unexpected categories response format:", response);
-            }
-          },
-          error: function (xhr, status, error) {
-            console.error("Error loading categories:", error);
-            $('#categoryFilter').html('<p class="text-danger">Failed to load categories. Please try again later.</p>');
-          }
-        });
+          $.ajax({
+              method: "GET",
+              url: `${url}api/category`,
+              dataType: 'json',
+              success: function (response) {
+                  $('#categoryFilter').empty();
+                  $('#categoryFilter').append(`
+                      <button class="category-btn active" data-category="all">All Categories</button>
+                  `);
+                  
+                  if (response.data && Array.isArray(response.data)) {
+                      $.each(response.data, function (key, category) {
+                          $('#categoryFilter').append(`
+                              <button class="category-btn" data-category="${category.category_id}">
+                                  ${category.description || 'Unnamed Category'}
+                              </button>
+                          `);
+                      });
+                  } else {
+                      console.error("Unexpected categories response format:", response);
+                  }
+              },
+              error: function (xhr, status, error) {
+                  console.error("Error loading categories:", error);
+                  $('#categoryFilter').html('<p class="text-danger">Failed to load categories. Please try again later.</p>');
+              }
+          });
       }
 
       // Load items with category filtering
-      function loadItems(category = 'all') {
-        let apiUrl = `${url}api/item`;
-        if (category !== 'all') {
-          apiUrl += `?category=${category}`;
+     function loadItems(category = 'all') {
+    let apiUrl = `${url}api/item`;
+    if (category !== 'all') {
+        apiUrl += `?category=${category}`;
+    }
+
+    $.ajax({
+        method: "GET",
+        url: apiUrl,
+        dataType: 'json',
+        success: function (response) {
+            $(".products-grid-container").empty();
+
+            // Check if response has 'rows' or if it's directly an array
+            const items = response.rows || response.data || response;
+            
+            if (!Array.isArray(items)) {
+                console.error("Unexpected items response format:", response);
+                return;
+            }
+
+            $.ajax({
+                method: "GET",
+                url: `${url}api/category`,
+                dataType: 'json',
+                success: function (categoriesResponse) {
+                    const categories = categoriesResponse.data || categoriesResponse;
+                    
+                    $.each(items, function (key, item) {
+                        // Find the category for this item
+                        let categoryName = 'Uncategorized';
+                        let categoryId = null;
+                        
+                        if (item.category_id) {
+                            const category = categories.find(c => c.category_id == item.category_id);
+                            if (category) {
+                                categoryName = category.description || 'Uncategorized';
+                                categoryId = category.category_id;
+                            }
+                        }
+
+                        // Ensure we have a proper item object
+                        if (!item) return;
+                        
+                        // Handle images - use images array if available, otherwise fall back to single image
+                        const productImages = item.images && item.images.length > 0 ? 
+                            item.images : 
+                            (item.image ? [item.image] : ['placeholder.jpg']);
+                        
+                        const itemCard = `
+                        <div class="product-card" data-id="${item.item_id}">
+                            <div class="product-image-gallery">
+                                <div class="product-image-container">
+                                    <!-- Images will be inserted by ImageGallery class -->
+                                </div>
+                                <button class="gallery-arrow prev">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <button class="gallery-arrow next">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                                <div class="gallery-nav">
+                                    <!-- Navigation dots will be inserted here -->
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <span class="product-category">${categoryName}</span>
+                                <h3 class="product-name">${item.item_name}</h3>
+                                <div class="product-price">₱${item.sell_price}</div>
+                                <div class="product-stock">Stock: ${item.quantity ?? 0}</div>
+                                <div class="product-actions">
+                                    <div class="quantity-selector">
+                                        <input type="number" class="quantity-input" min="1" max="${item.quantity ?? 1}" value="1">
+                                    </div>
+                                    <div class="action-buttons">
+                                        <button class="btn-add-cart add-to-cart" 
+                                            data-id="${item.item_id}"
+                                            data-name="${item.item_name}"
+                                            data-price="${item.sell_price}"
+                                            data-image="${item.image || productImages[0]}"
+                                            data-stock="${item.quantity ?? 0}"
+                                            data-category="${categoryId}">
+                                            <i class="fas fa-shopping-cart"></i>
+                                            Add to Cart
+                                        </button>
+                                        <button class="btn-view-details view-details" 
+                                            data-id="${item.item_id}"
+                                            data-name="${item.item_name}"
+                                            data-description="${item.description || 'No description available'}"
+                                            data-price="${item.sell_price}"
+                                            data-image="${item.image || productImages[0]}"
+                                            data-stock="${item.quantity ?? 0}"
+                                            data-category="${categoryName}"
+                                            data-images='${JSON.stringify(productImages)}'>
+                                            <i class="fas fa-info-circle"></i>
+                                            Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                        
+                        $(".products-grid-container").append(itemCard);
+                        
+                        // Initialize image gallery for this product card
+                        const $card = $(`.product-card[data-id="${item.item_id}"]`);
+                        new ImageGallery($card, productImages, false);
+                    });
+                },
+                error: function (error) {
+                    console.error("Error loading categories:", error);
+                }
+            });
+        },
+        error: function (error) {
+            console.error("Error loading items:", error);
+            $(".products-grid-container").html('<p class="text-danger text-center">Failed to load products. Please try again later.</p>');
         }
-
-        $.ajax({
-          method: "GET",
-          url: apiUrl,
-          dataType: 'json',
-          success: function (data) {
-              $(".products-grid-container").empty();
-
-              $.each(data.rows, function (key, value) {
-                  const productImages = value.images && value.images.length > 0 ? value.images : [value.image];
-                  
-                  const itemCard = `
-                  <div class="product-card" data-id="${value.item_id}">
-                      <div class="product-image-gallery">
-                          <div class="product-image-container">
-                              <!-- Images will be inserted by ImageGallery class -->
-                          </div>
-                          <button class="gallery-arrow prev">
-                              <i class="fas fa-chevron-left"></i>
-                          </button>
-                          <button class="gallery-arrow next">
-                              <i class="fas fa-chevron-right"></i>
-                          </button>
-                          <div class="gallery-nav">
-                              <!-- Navigation dots will be inserted here -->
-                          </div>
-                      </div>
-                      <div class="product-info">
-                          <span class="product-category">${value.category_name || 'Uncategorized'}</span>
-                          <h3 class="product-name">${value.item_name}</h3>
-                          <div class="product-price">₱${value.sell_price}</div>
-                          <div class="product-stock">Stock: ${value.quantity ?? 0}</div>
-                          <div class="product-actions">
-                              <div class="quantity-selector">
-                                  <input type="number" class="quantity-input" min="1" max="${value.quantity ?? 1}" value="1">
-                              </div>
-                              <div class="action-buttons">
-                                  <button class="btn-add-cart add-to-cart" 
-                                      data-id="${value.item_id}"
-                                      data-name="${value.item_name}"
-                                      data-price="${value.sell_price}"
-                                      data-image="${value.image}"
-                                      data-stock="${value.quantity ?? 0}"
-                                      data-category="${value.category_id}">
-                                      <i class="fas fa-shopping-cart"></i>
-                                      Add to Cart
-                                  </button>
-                                  <button class="btn-view-details view-details" 
-                                      data-id="${value.item_id}"
-                                      data-name="${value.item_name}"
-                                      data-description="${value.description || 'No description available'}"
-                                      data-price="${value.sell_price}"
-                                      data-image="${value.image}"
-                                      data-stock="${value.quantity ?? 0}"
-                                      data-category="${value.category_name || 'Uncategorized'}"
-                                      data-images='${JSON.stringify(productImages)}'>
-                                      <i class="fas fa-info-circle"></i>
-                                      Details
-                                  </button>
-                              </div>
-                          </div>
-                      </div>
-                  </div>`;
-                  
-                  $(".products-grid-container").append(itemCard);
-                  
-                  // Initialize image gallery for this product card
-                  const $card = $(`.product-card[data-id="${value.item_id}"]`);
-                  new ImageGallery($card, productImages, false);
-              });
-          },
-          error: function (error) {
-              console.log(error);
-          }
-        });
-      }
+    });
+}
 
       // Store modal gallery instance
       let modalGallery = null;
 
       // Show product details in modal
       $(document).on('click', '.view-details', function() {
-        const id = $(this).data('id');
-        const name = $(this).data('name');
-        const description = $(this).data('description');
-        const price = $(this).data('price');
-        const image = $(this).data('image');
-        const stock = $(this).data('stock');
-        const category = $(this).data('category');
-        const images = $(this).data('images') || [image];
+          const id = $(this).data('id');
+          const name = $(this).data('name');
+          const description = $(this).data('description');
+          const price = $(this).data('price');
+          const image = $(this).data('image');
+          const stock = $(this).data('stock');
+          const category = $(this).data('category') || 'Uncategorized'; // Ensure we have a fallback
+          const images = $(this).data('images') || [image];
 
-        $('#productDetailsModalLabel').text(name).data('id', id);
-        $('#modalProductName').text(name);
-        $('#modalProductDescription').text(description);
-        $('#modalProductCategory').text(category);
-        $('#modalProductPrice').text(`₱${price}`);
-        $('#modalProductStock').text(stock);
-        $('#modalQuantityInput').attr('max', stock).val(1);
-        
-        // Clean up previous modal gallery
-        if (modalGallery) {
-          modalGallery.destroy();
-        }
-        
-        // Initialize modal image gallery
-        const $modal = $('#productDetailsModal');
-        modalGallery = new ImageGallery($modal, images, true);
-        
-        // Load reviews for this specific product
-        loadReviews(id);
+          $('#productDetailsModalLabel').text(name).data('id', id);
+          $('#modalProductName').text(name);
+          $('#modalProductDescription').text(description);
+          $('#modalProductCategory').text(category);
+          $('#modalProductPrice').text(`₱${price}`);
+          $('#modalProductStock').text(stock);
+          $('#modalQuantityInput').attr('max', stock).val(1);
+          
+          // Clean up previous modal gallery
+          if (modalGallery) {
+              modalGallery.destroy();
+          }
+          
+          // Initialize modal image gallery
+          const $modal = $('#productDetailsModal');
+          modalGallery = new ImageGallery($modal, images, true);
+          
+          // Load reviews for this specific product
+          loadReviews(id);
 
-        productModal.show();
+          productModal.show();
       });
 
       // Add to cart from modal
       $(document).on('click', '#modalAddToCart', function() {
-        const qty = parseInt($('#modalQuantityInput').val());
-        const id = $('#productDetailsModalLabel').data('id');
-        const name = $('#modalProductName').text();
-        const price = parseFloat($('#modalProductPrice').text().replace('₱', ''));
-        const image = $('#modalImageContainer .product-image.active img').attr('src').replace(imageBaseUrl, '');
-        const stock = parseInt($('#modalProductStock').text());
-        
-        if (!isUserLoggedIn()) {
-          alert('Please sign in to add items to your cart');
-          window.location.href = 'login.html';
-          return;
-        }
-
-        let cart = getCart();
-        let existing = cart.find(item => item.item_id == id);
-
-        if (existing) {
-          if ((existing.quantity + qty) > stock) {
-            alert(`You can't add more than available stock (${stock})`);
-            return;
+          const qty = parseInt($('#modalQuantityInput').val());
+          const id = $('#productDetailsModalLabel').data('id');
+          const name = $('#modalProductName').text();
+          const price = parseFloat($('#modalProductPrice').text().replace('₱', ''));
+          const image = $('#modalImageContainer .product-image.active img').attr('src').replace(imageBaseUrl, '');
+          const stock = parseInt($('#modalProductStock').text());
+          
+          if (!isUserLoggedIn()) {
+              alert('Please sign in to add items to your cart');
+              window.location.href = 'login.html';
+              return;
           }
-          existing.quantity += qty;
-        } else {
-          cart.push({
-            item_id: id,
-            name,
-            price,
-            image,
-            stock,
-            quantity: qty
-          });
-        }
 
-        saveCart(cart);
-        itemCount = cart.reduce((total, item) => total + item.quantity, 0);
-        $('#itemCount').text(itemCount).css('display', 'block');
-        alert(`${name} added to cart!`);
+          let cart = getCart();
+          let existing = cart.find(item => item.item_id == id);
+
+          if (existing) {
+              if ((existing.quantity + qty) > stock) {
+                  alert(`You can't add more than available stock (${stock})`);
+                  return;
+              }
+              existing.quantity += qty;
+          } else {
+              cart.push({
+                  item_id: id,
+                  name,
+                  price,
+                  image,
+                  stock,
+                  quantity: qty
+              });
+          }
+
+          saveCart(cart);
+          itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+          $('#itemCount').text(itemCount).css('display', 'block');
+          alert(`${name} added to cart!`);
+          productModal.hide();
+      });
+
+      // Add to cart from grid
+      $(document).on('click', '.add-to-cart', function (e) {
+          e.stopPropagation();
+          
+          if (!isUserLoggedIn()) {
+              alert('Please sign in to add items to your cart');
+              window.location.href = 'login.html';
+              return;
+          }
+
+          const $productCard = $(this).closest('.product-card');
+          const qty = parseInt($productCard.find('.quantity-input').val());
+          const id = $(this).data('id');
+          const name = $(this).data('name');
+          const price = parseFloat($(this).data('price'));
+          const image = $(this).data('image');
+          const stock = parseInt($(this).data('stock'));
+          const category = $(this).data('category');
+
+          let cart = getCart();
+          let existing = cart.find(item => item.item_id == id);
+
+          if (existing) {
+              if ((existing.quantity + qty) > stock) {
+                  alert(`You can't add more than available stock (${stock})`);
+                  return;
+              }
+              existing.quantity += qty;
+          } else {
+              cart.push({
+                  item_id: id,
+                  name,
+                  price,
+                  image,
+                  stock,
+                  category,
+                  quantity: qty
+              });
+          }
+
+          saveCart(cart);
+          itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+          $('#itemCount').text(itemCount).css('display', 'block');
+          alert(`${name} added to cart!`);
       });
 
       // Category filter click handler
       $(document).on('click', '.category-btn', function() {
-        const category = $(this).data('category');
-        currentCategory = category;
-        
-        $('.category-btn').removeClass('active');
-        $(this).addClass('active');
-        
-        loadItems(category);
+          const category = $(this).data('category');
+          currentCategory = category;
+          
+          $('.category-btn').removeClass('active');
+          $(this).addClass('active');
+          
+          loadItems(category);
       });
 
       // Clean up modal gallery when modal closes
       $('#productDetailsModal').on('hidden.bs.modal', function() {
-        if (modalGallery) {
-          modalGallery.destroy();
-          modalGallery = null;
-        }
+          if (modalGallery) {
+              modalGallery.destroy();
+              modalGallery = null;
+          }
       });
 
       // Initialize cart count

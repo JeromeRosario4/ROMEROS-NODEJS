@@ -68,7 +68,7 @@
           res.data.forEach(item => {
             const images = item.images || [];
             const imgTag = images.length > 0
-              ? `<img src="/uploads/${images[0]}" class="card-img-top" style="height:200px; object-fit:contain;">`
+              ? `<img src="/uploads/reviews/${images[0]}" class="card-img-top" style="height:200px; object-fit:contain;">`
               : '<div class="text-muted">No image</div>';
   
             html += `
