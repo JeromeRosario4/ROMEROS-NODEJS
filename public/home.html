@@ -1194,11 +1194,9 @@
       });
 
       // Initialize cart count
-      $("#home").load("header.html", function() {
-          const cart = getCart();
-          itemCount = cart.reduce((total, item) => total + item.quantity, 0);
-          $('#itemCount').text(itemCount).toggle(itemCount > 0);
-      });
+     const cart = getCart();
+itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+$('#itemCount').text(itemCount).toggle(itemCount > 0);
 
       // Initial load
       loadCategories();

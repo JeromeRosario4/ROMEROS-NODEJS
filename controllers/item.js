@@ -1,14 +1,24 @@
 const db = require('../config/database');
 
 const getAllItems = (req, res) => {
-    const sql = `
+    const categoryId = req.query.category;
+
+    let sql = `
         SELECT i.*, s.*, c.description AS category 
         FROM item i
         INNER JOIN stock s ON i.item_id = s.item_id
         INNER JOIN category c ON i.category_id = c.category_id
         WHERE i.deleted_at IS NULL
-        GROUP BY i.item_id
     `;
+    const params = [];
+
+    // Filter by category if provided and not 'all'
+    if (categoryId && categoryId !== 'all') {
+        sql += ' AND i.category_id = ?';
+        params.push(categoryId);
+    }
+
+    sql += ' GROUP BY i.item_id';
 
     const imagesSql = `
         SELECT item_id, image_path 
@@ -17,20 +27,18 @@ const getAllItems = (req, res) => {
     `;
 
     try {
-        db.query(sql, (err, items, fields) => {
-            if (err instanceof Error) {
+        db.query(sql, params, (err, items) => {
+            if (err) {
                 console.log(err);
                 return res.status(500).json({ error: 'Database error fetching items' });
             }
 
-            // Get all images
             db.query(imagesSql, (err, images) => {
-                if (err instanceof Error) {
+                if (err) {
                     console.log(err);
                     return res.status(500).json({ error: 'Database error fetching images' });
                 }
 
-                // Group images by item_id
                 const imagesByItem = images.reduce((acc, image) => {
                     if (!acc[image.item_id]) {
                         acc[image.item_id] = [];
@@ -42,12 +50,10 @@ const getAllItems = (req, res) => {
                 const itemsWithImages = items.map(item => ({
                     ...item,
                     images: imagesByItem[item.item_id] || [],
-                    image: imagesByItem[item.item_id] ? imagesByItem[item.item_id][0] : null // First image for backward compatibility
+                    image: imagesByItem[item.item_id]?.[0] || null
                 }));
 
-                return res.status(200).json({
-                    rows: itemsWithImages
-                });
+                return res.status(200).json({ rows: itemsWithImages });
             });
         });
     } catch (error) {
@@ -55,6 +61,7 @@ const getAllItems = (req, res) => {
         return res.status(500).json({ error: 'Server error' });
     }
 };
+
 
 // // Get items by category (public) 
 // const getItemsByCategory = (req, res) => {
