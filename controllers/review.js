@@ -60,23 +60,25 @@ const createReview = (req, res) => {
           const review_id = reviewResult.insertId;
 
           // Step 3: Insert uploaded images (if any)
-            const imagePaths = req.files?.map(file => file.path.replace(/^public[\\/]/, '')) || [];
-
-          if (imagePaths.length === 0) {
+          const imageFiles = req.files || [];
+          if (imageFiles.length === 0) {
             return res.status(201).json({ message: 'Review created successfully.', review_id });
           }
 
           let completed = 0;
-          for (const imagePath of imagePaths) {
+          for (const file of imageFiles) {
+            // Get relative path like 'uploads/reviews/filename.jpg'
+            const relativePath = file.path.replace(/^public[\\/]/, '').replace(/\\/g, '/'); // Normalize slashes
+
             db.execute(
-              `INSERT INTO review_images (review_id, image_path) VALUES (?, ?)`,
-              [review_id, imagePath],
+              `INSERT INTO review_images (review_id, image_path, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)`,
+              [review_id, relativePath],
               (err) => {
                 if (err) {
                   console.error('Error inserting review image:', err);
                 }
                 completed++;
-                if (completed === imagePaths.length) {
+                if (completed === imageFiles.length) {
                   res.status(201).json({ message: 'Review and images saved successfully.', review_id });
                 }
               }
