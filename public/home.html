@@ -582,7 +582,7 @@
           <div class="mt-5">
             <h5 class="reviews-title">Customer Reviews</h5>
             <div id="productReviews" class="reviews-container">
-              <!-- Reviews will be loaded here dynamically -->
+              <div class="review-images-container mt-2" data-review-id="${review.id}"></div>
             </div>
             <div id="noReviewsMessage" class="no-reviews">
               No reviews yet. Be the first to review this product!
@@ -768,133 +768,176 @@
         }
       }
 
-      // Function to load reviews for a specific product
-      function loadReviews(itemId) {
-          $.ajax({
-              method: "GET",
-              url: `${url}api/reviews`,
-              data: { item_id: itemId },
-              dataType: 'json',
-              success: function (response) {
-                  console.log("Reviews API Response:", response);
-                  $('#productReviews').empty();
-                  
-                  if (response.data && Array.isArray(response.data)) {
-                      if (response.data.length > 0) {
-                          $('#noReviewsMessage').hide();
-                          
-                          // First get all reviews, then fetch images for each
-                          $.each(response.data, function (key, review) {
-                              try {
-                                  // Only show reviews that match the current item_id
-                                  if (review.item_id == itemId) {
-                                      const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
-                                          year: 'numeric',
-                                          month: 'long',
-                                          day: 'numeric'
-                                      });
-                                      
-                                      // Start building the review element
-                                      let reviewElement = `
-                                          <div class="card review-card mb-3">
-                                              <div class="card-body">
-                                                  <div class="d-flex justify-content-between align-items-center mb-2">
-                                                      <div>
-                                                          <span class="review-author">${review.customer_name || 'Anonymous'}</span>
-                                                          <div class="rating">
-                                                              ${getStarRating(review.rating)}
-                                                          </div>
-                                                      </div>
-                                                      <span class="review-date">${reviewDate}</span>
-                                                  </div>
-                                                  <div class="review-text">
-                                                      ${review.review_text ? `<p>${review.review_text}</p>` : '<p class="text-muted">No review text provided</p>'}
-                                                  </div>
-                                      `;
+    // Function to load reviews for a specific product
+function loadReviews(itemId) {
+    $.ajax({
+        method: "GET",
+        url: `${url}api/reviews`,
+        data: { item_id: itemId },
+        dataType: 'json',
+        success: function (response) {
+            console.log("Reviews API Response:", response);
+            $('#productReviews').empty();
+            
+            if (response.data && Array.isArray(response.data)) {
+                if (response.data.length > 0) {
+                    $('#noReviewsMessage').hide();
+                    
+                    // Process each review
+                    $.each(response.data, function (key, review) {
+                        try {
+                            // Only show reviews that match the current item_id
+                            if (review.item_id == itemId) {
+                                const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric'
+                                });
+                                
+                                // Create unique ID for this review's image container
+                                const reviewImageContainerId = `review-images-${review.review_id || review.id}`;
+                                
+                                // Build the review element
+                                let reviewElement = `
+                                    <div class="card review-card mb-3" data-review-id="${review.review_id || review.id}">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <div>
+                                                    <span class="review-author">${review.customer_name || 'Anonymous'}</span>
+                                                    <div class="rating">
+                                                        ${getStarRating(review.rating)}
+                                                    </div>
+                                                </div>
+                                                <span class="review-date">${reviewDate}</span>
+                                            </div>
+                                            <div class="review-text">
+                                                ${review.review_text ? `<p>${review.review_text}</p>` : '<p class="text-muted">No review text provided</p>'}
+                                            </div>
+                                            <div class="review-images-container mt-3" id="${reviewImageContainerId}">
+                                                <div class="text-muted small">Loading images...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                
+                                $('#productReviews').append(reviewElement);
+                                
+                                // Fetch images for this review after DOM element is added
+                                fetchReviewImages(review.review_id || review.id, reviewImageContainerId);
+                            }
+                        } catch (e) {
+                            console.error("Error processing review:", review, e);
+                        }
+                    });
+                } else {
+                    $('#noReviewsMessage').show();
+                }
+            } else {
+                console.error("Unexpected reviews response format:", response);
+                $('#noReviewsMessage').show().text("Error loading reviews. Invalid data format.");
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Error loading reviews:", error);
+            $('#noReviewsMessage').show().text("Error loading reviews. Please try again later.");
+        }
+    });
+}
 
-                                      // Add a placeholder for images (we'll fetch them next)
-                                      reviewElement += `
-                                          <div class="review-images-container mt-3" data-review-id="${review.review_id}">
-                                              <!-- Images will be loaded here -->
-                                          </div>
-                                      `;
+// Function to fetch images for a specific review
+function fetchReviewImages(reviewId, containerId) {
+    const baseUrl = 'http://localhost:3000';
+    const uploadsBasePath = 'uploads/reviews';
 
-                                      reviewElement += `
-                                              </div>
-                                          </div>
-                                      `;
-                                      
-                                      $('#productReviews').append(reviewElement);
-                                      
-                                      // Now fetch images for this review
-                                      fetchReviewImages(review.review_id);
-                                  }
-                              } catch (e) {
-                                  console.error("Error processing review:", review, e);
-                              }
-                          });
-                      } else {
-                          $('#noReviewsMessage').show();
-                      }
-                  } else {
-                      console.error("Unexpected reviews response format:", response);
-                      $('#noReviewsMessage').show().text("Error loading reviews. Invalid data format.");
-                  }
-              },
-              error: function (xhr, status, error) {
-                  console.error("Error loading reviews:", error);
-                  $('#noReviewsMessage').show().text("Error loading reviews. Please try again later.");
-              }
-          });
-      }
+    // Clear container and show loading state
+    const $container = $(`#${containerId}`);
+    $container.html('<div class="text-muted small">Loading images...</div>');
 
-      // Function to fetch images for a specific review
-      function fetchReviewImages(reviewId) {
-          $.ajax({
-              method: "GET",
-              url: `${url}api/review-images`,
-              data: { review_id: reviewId },
-              dataType: 'json',
-              success: function(response) {
-                  if (response.data && Array.isArray(response.data) && response.data.length > 0) {
-                      const $container = $(`.review-images-container[data-review-id="${reviewId}"]`);
-                      let imagesHTML = '<div class="d-flex flex-wrap gap-2">';
-                      
-                      $.each(response.data, function(index, image) {
-                          imagesHTML += `
-                              <a href="${imageBaseUrl}${image.image_path}" target="_blank" class="review-image-thumbnail">
-                                  <img src="${imageBaseUrl}${image.image_path}" 
-                                       alt="Review image ${index + 1}" 
-                                       class="img-thumbnail" 
-                                       style="width: 80px; height: 80px; object-fit: cover;"
-                                       onerror="this.src='${imageBaseUrl}placeholder.jpg'; this.onerror=null;">
-                              </a>
-                          `;
-                      });
-                      
-                      imagesHTML += '</div>';
-                      $container.html(imagesHTML);
-                  }
-              },
-              error: function(xhr, status, error) {
-                  console.error("Error loading review images:", error);
-              }
-          });
-      }
+    $.ajax({
+        method: "GET",
+        url: `${baseUrl}/api/reviews/${reviewId}/images`,
+        dataType: 'json',
+        success: function(response) {
+            console.log(`Review images response for review ${reviewId}:`, response);
 
-      // Helper function to generate star rating
-      function getStarRating(rating) {
-          if (!rating) return '';
-          let stars = '';
-          for (let i = 1; i <= 5; i++) {
-              if (i <= rating) {
-                  stars += '<i class="fas fa-star text-warning"></i>';
-              } else {
-                  stars += '<i class="far fa-star text-warning"></i>';
-              }
-          }
-          return stars;
-      }
+            if (response.success && Array.isArray(response.data) && response.data.length > 0) {
+                let imagesHTML = '<div class="d-flex flex-wrap gap-2">';
+
+                $.each(response.data, function(index, image) {
+                    if (image.image_path) {
+                        // Clean up the image path - remove any leading/trailing slashes
+                        let cleanPath = image.image_path.replace(/^\/|\/$/g, '');
+                        
+                        // If image_path already includes 'uploads/reviews/', don't prepend again
+                        const fullImagePath = cleanPath.startsWith('uploads/reviews/')
+                            ? `${baseUrl}/${cleanPath}`
+                            : `${baseUrl}/${uploadsBasePath}/${cleanPath}`;
+                        
+                        const imageId = image.reviewimg_id || index;
+                        const uploadedAt = image.created_at ? 
+                            new Date(image.created_at).toLocaleString() : 
+                            'Unknown date';
+
+                        imagesHTML += `
+                            <div class="review-image-container position-relative" data-image-id="${imageId}">
+                                <a href="${fullImagePath}" 
+                                   target="_blank" 
+                                   class="review-image-thumbnail d-block"
+                                   title="Uploaded: ${uploadedAt}"
+                                   data-fancybox="review-gallery-${reviewId}"
+                                   data-caption="Review image ${index + 1}">
+                                    <img src="${fullImagePath}" 
+                                         alt="Review image ${index + 1}" 
+                                         class="img-thumbnail" 
+                                         style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                                         onerror="this.onerror=null;this.src='${baseUrl}/images/image-not-found.png'">
+                                </a>
+                            </div>
+                        `;
+                    }
+                });
+
+                imagesHTML += '</div>';
+                $container.html(imagesHTML);
+
+                // Initialize fancybox if available
+                if (typeof $.fancybox !== 'undefined') {
+                    $(`[data-fancybox="review-gallery-${reviewId}"]`).fancybox();
+                }
+                
+            } else {
+                $container.html('<div class="text-muted small">No images available.</div>');
+                console.log(`No images found for review ${reviewId}`);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error(`Error loading review images for review ${reviewId}:`, error);
+            console.error('Status:', status);
+            console.error('Response:', xhr.responseText);
+            
+            $container.html(`
+                <div class="alert alert-danger small">
+                    Error loading images. ${xhr.responseJSON?.message || 'Please try again later.'}
+                </div>
+            `);
+        }
+    });
+}
+
+// Helper function to generate star rating
+function getStarRating(rating) {
+    if (!rating) return '';
+    let stars = '';
+    const numRating = parseInt(rating);
+    for (let i = 1; i <= 5; i++) {
+        if (i <= numRating) {
+            stars += '<i class="fas fa-star text-warning"></i>';
+        } else {
+            stars += '<i class="far fa-star text-warning"></i>';
+        }
+    }
+    return stars;
+}
 
       // Load categories
       function loadCategories() {

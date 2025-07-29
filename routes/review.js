@@ -7,6 +7,7 @@ const { isAuthenticatedUser, authorizeRoles } = require('../middlewares/auth');
 // Public routes
 router.get('/', reviewController.getAllReviews);
 router.get('/customer/:customerId', reviewController.getReviewsByCustomer);
+router.get('/:id/images', reviewController.getReviewImages);
 
 // Authenticated user routes
 router.post('/create', 

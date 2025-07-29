@@ -171,36 +171,40 @@ $(document).ready(async function () {
                             <div class="order-items">
                                 <strong>Items:</strong>
                                 <div class="mt-2">
-                                    ${items.map(item => {
-                                        // Check if this item already has a review
-                                        const hasReview = existingReviews.some(review => 
-                                            review.item_id === item.item_id && 
-                                            review.order_id === order.orderinfo_id
-                                        );
+                                  ${items.map(item => {
+    // Check if this item already has a review
+    const hasReview = existingReviews.some(review => 
+        review.item_id === item.item_id && 
+        review.order_id === order.orderinfo_id
+    );
 
-                                        return `
-                                        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-                                            <div class="flex-grow-1">
-                                                <span class="fw-medium">${item.item_name || 'Unknown Item'}</span>
-                                                <small class="text-muted d-block">Qty: ${item.quantity || 0}</small>
-                                                ${order.status === 'Delivered' ? 
-                                                    hasReview ? `
-                                                        <button class="btn btn-sm btn-outline-secondary mt-1" disabled>
-                                                            <i class="fas fa-check-circle me-1"></i> Reviewed
-                                                        </button>
-                                                    ` : `
-                                                        <button class="btn btn-sm btn-outline-primary mt-1 create-review-btn" 
-                                                                data-item-id="${item.item_id}"
-                                                                data-order-id="${order.orderinfo_id}"
-                                                                data-item-name="${escapeHtml(item.item_name || 'Unknown Item')}">
-                                                            <i class="fas fa-star me-1"></i> Create Review
-                                                        </button>
-                                                    `
-                                                : ''}
-                                            </div>
-                                            <span class="fw-bold">₱${((parseFloat(item.quantity) || 0) * (parseFloat(item.price) || 0)).toFixed(2)}</span>
-                                        </div>
-                                    `}).join('')}
+    return `
+    <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+        <div class="flex-grow-1">
+            <span class="fw-medium">${item.item_name || 'Unknown Item'}</span>
+            <small class="text-muted d-block">Qty: ${item.quantity || 0}</small>
+            ${order.status === 'Delivered' ? 
+                hasReview ? `
+                    <div class="mt-1">
+                        <span class="badge bg-info text-dark me-1">Already Reviewed</span>
+                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                            <i class="fas fa-check-circle me-1"></i> Reviewed
+                        </button>
+                    </div>
+                ` : `
+                    <button class="btn btn-sm btn-outline-primary mt-1 create-review-btn" 
+                            data-item-id="${item.item_id}"
+                            data-order-id="${order.orderinfo_id}"
+                            data-item-name="${escapeHtml(item.item_name || 'Unknown Item')}">
+                        <i class="fas fa-star me-1"></i> Create Review
+                    </button>
+                `
+            : ''}
+        </div>
+        <span class="fw-bold">₱${((parseFloat(item.quantity) || 0) * (parseFloat(item.price) || 0)).toFixed(2)}</span>
+    </div>
+    `;
+}).join('')}
                                 </div>
                             </div>
                         ` : '<p class="text-muted">No items found for this order.</p>'}

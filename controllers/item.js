@@ -26,6 +26,13 @@ const getAllItems = (req, res) => {
         WHERE deleted_at IS NULL
     `;
 
+    const reviewsSql = `
+        SELECT r.*, ri.image_path AS review_image
+        FROM reviews r
+        LEFT JOIN review_images ri ON r.review_id = ri.review_id AND ri.deleted_at IS NULL
+        WHERE r.deleted_at IS NULL
+    `;
+
     try {
         db.query(sql, params, (err, items) => {
             if (err) {
@@ -39,21 +46,81 @@ const getAllItems = (req, res) => {
                     return res.status(500).json({ error: 'Database error fetching images' });
                 }
 
-                const imagesByItem = images.reduce((acc, image) => {
-                    if (!acc[image.item_id]) {
-                        acc[image.item_id] = [];
+                db.query(reviewsSql, (err, reviewsData) => {
+                    if (err) {
+                        console.log(err);
+                        return res.status(500).json({ error: 'Database error fetching reviews' });
                     }
-                    acc[image.item_id].push(image.image_path);
-                    return acc;
-                }, {});
 
-                const itemsWithImages = items.map(item => ({
-                    ...item,
-                    images: imagesByItem[item.item_id] || [],
-                    image: imagesByItem[item.item_id]?.[0] || null
-                }));
+                    // Organize images by item_id
+                    const imagesByItem = images.reduce((acc, image) => {
+                        if (!acc[image.item_id]) {
+                            acc[image.item_id] = [];
+                        }
+                        acc[image.item_id].push(image.image_path);
+                        return acc;
+                    }, {});
 
-                return res.status(200).json({ rows: itemsWithImages });
+                    // Organize reviews by item_id
+                    const reviewsByItem = reviewsData.reduce((acc, review) => {
+                        if (!acc[review.item_id]) {
+                            acc[review.item_id] = [];
+                        }
+                        
+                        // Structure the review data
+                        const reviewObj = {
+                            review_id: review.review_id,
+                            customer_id: review.customer_id,
+                            orderinfo_id: review.orderinfo_id,
+                            rating: review.rating,
+                            review_text: review.review_text,
+                            created_at: review.created_at,
+                            images: []
+                        };
+
+                        // Add review image if exists
+                        if (review.review_image) {
+                            reviewObj.images.push(review.review_image);
+                        }
+
+                        // Check if this review already exists in the array
+                        const existingReview = acc[review.item_id].find(r => r.review_id === review.review_id);
+                        if (existingReview) {
+                            // If review exists and has a new image, add it
+                            if (review.review_image) {
+                                existingReview.images.push(review.review_image);
+                            }
+                        } else {
+                            acc[review.item_id].push(reviewObj);
+                        }
+
+                        return acc;
+                    }, {});
+
+                    // Calculate average rating for each item
+                    const itemRatings = {};
+                    Object.keys(reviewsByItem).forEach(itemId => {
+                        const reviews = reviewsByItem[itemId];
+                        if (reviews.length > 0) {
+                            const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+                            itemRatings[itemId] = {
+                                average_rating: (total / reviews.length).toFixed(1),
+                                review_count: reviews.length
+                            };
+                        }
+                    });
+
+                    const itemsWithData = items.map(item => ({
+                        ...item,
+                        images: imagesByItem[item.item_id] || [],
+                        image: imagesByItem[item.item_id]?.[0] || null,
+                        reviews: reviewsByItem[item.item_id] || [],
+                        average_rating: itemRatings[item.item_id]?.average_rating || '0.0',
+                        review_count: itemRatings[item.item_id]?.review_count || 0
+                    }));
+
+                    return res.status(200).json({ rows: itemsWithData });
+                });
             });
         });
     } catch (error) {
@@ -61,7 +128,6 @@ const getAllItems = (req, res) => {
         return res.status(500).json({ error: 'Server error' });
     }
 };
-
 
 // // Get items by category (public) 
 // const getItemsByCategory = (req, res) => {

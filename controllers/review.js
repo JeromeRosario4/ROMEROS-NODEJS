@@ -255,6 +255,28 @@ const getReviewsByCustomer = async (req, res) => {
     }
 };
 
+// Get images for a specific review
+const getReviewImages = async (req, res) => {
+    try {
+        const reviewId = req.params.id;
+        const [images] = await db.promise().query(
+            `SELECT reviewimg_id, image_path, created_at FROM review_images WHERE review_id = ? AND deleted_at IS NULL`,
+            [reviewId]
+        );
+        return res.status(200).json({
+            success: true,
+            data: images
+        });
+    } catch (err) {
+        return handleDbError(res, err, 'fetching review images');
+    }
+};
+
+module.exports = {
+    // ...existing exports
+    getReviewImages,
+};
+
 const updateReview = async (req, res) => {
     try {
         const reviewId = req.params.id;
@@ -379,5 +401,6 @@ module.exports = {
     getReviewsByCustomer,
     updateReview,
     softDeleteReview,
-    restoreReview
+    restoreReview,
+    getReviewImages
 };
