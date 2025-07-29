@@ -93,7 +93,7 @@ $(document).ready(async function () {
                 return;
             }
 
-            // Get reviews - modify the endpoint to include deleted reviews
+            // Get reviews - including deleted ones
             const reviewsRes = await $.ajax({
                 url: `${API_BASE_URL}/api/reviews/customer/${customerId}?include_deleted=true`,
                 method: 'GET',
@@ -124,76 +124,73 @@ $(document).ready(async function () {
             }
 
             // Process and display reviews
-           // Process and display reviews
-const html = reviewsRes.data.map(review => {
-    const stars = generateStars(review.rating);
-    const images = Array.isArray(review.images) ? review.images : [];
-    const isDeleted = review.deleted_at !== null;
+            const html = reviewsRes.data.map(review => {
+                const stars = generateStars(review.rating);
+                const images = Array.isArray(review.images) ? review.images : [];
+                const isDeleted = review.deleted_at !== null;
 
-    return `
-        <div class="review-card mb-4 p-3 border rounded shadow-sm ${isDeleted ? 'bg-light opacity-75' : ''}">
-            ${isDeleted ? '<div class="badge bg-warning text-dark mb-2">Deleted</div>' : ''}
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <div class="flex-grow-1">
-                    <div class="item-name mb-2">${escapeHtml(review.item_name)}</div>
-                    <div class="rating-display">
-                        <span class="stars">${stars}</span>
-                        <span class="badge bg-primary">${review.rating}/5</span>
+                return `
+                    <div class="review-card mb-4 p-3 border rounded shadow-sm ${isDeleted ? 'bg-light opacity-75' : ''}">
+                        ${isDeleted ? '<div class="badge bg-warning text-dark mb-2"><i class="fas fa-trash me-1"></i>Deleted</div>' : ''}
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="flex-grow-1">
+                                <div class="item-name mb-2">${escapeHtml(review.item_name)}</div>
+                                <div class="rating-display">
+                                    <span class="stars">${stars}</span>
+                                    <span class="badge bg-primary">${review.rating}/5</span>
+                                </div>
+                            </div>
+                            <div class="review-meta text-end">
+                                <small>Order #${review.orderinfo_id}</small><br>
+                                <small>${formatDate(review.created_at)}</small>
+                                ${isDeleted ? `<br><small class="text-muted"><i class="far fa-clock me-1"></i>Deleted: ${formatDate(review.deleted_at)}</small>` : ''}
+                            </div>
+                        </div>
+
+                        ${review.review_text ? `
+                            <div class="review-text">
+                                <i class="fas fa-quote-left text-muted me-2"></i>
+                                ${escapeHtml(review.review_text)}
+                            </div>
+                        ` : ''}
+
+                        ${images.length > 0 && !isDeleted ? `
+                            <div class="review-images">
+                                ${images.map(image => `
+                                    <img src="/${image}" 
+                                         alt="Review Image" 
+                                         class="review-image"
+                                         onclick="showImageModal('/${image}')">
+                                `).join('')}
+                            </div>
+                        ` : ''}
+
+                        <div class="mt-3">
+                            ${!isDeleted ? `
+                                <button class="btn btn-sm btn-info edit-review-btn me-2" 
+                                    data-review-id="${review.review_id}" 
+                                    data-review-text="${encodeURIComponent(review.review_text || '')}"
+                                    data-rating="${review.rating}">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger delete-review-btn" 
+                                    data-review-id="${review.review_id}">
+                                    <i class="fas fa-trash me-1"></i> Delete
+                                </button>
+                            ` : `
+                                <button class="btn btn-sm btn-success restore-review-btn me-2" 
+                                    data-review-id="${review.review_id}">
+                                    <i class="fas fa-undo me-1"></i> Restore
+                                </button>
+                                <button class="btn btn-sm btn-danger permanently-delete-btn" 
+                                    data-review-id="${review.review_id}">
+                                    <i class="fas fa-times me-1"></i> Delete Permanently
+                                </button>
+                            `}
+                        </div>
                     </div>
-                </div>
-                <div class="review-meta text-end">
-                    <small>Order #${review.orderinfo_id}</small><br>
-                    <small>${formatDate(review.created_at)}</small>
-                    ${isDeleted ? `<br><small class="text-muted">Deleted: ${formatDate(review.deleted_at)}</small>` : ''}
-                </div>
-            </div>
-
-            ${review.review_text ? `
-                <div class="review-text">
-                    <i class="fas fa-quote-left text-muted me-2"></i>
-                    ${escapeHtml(review.review_text)}
-                </div>
-            ` : ''}
-
-            ${images.length > 0 && !isDeleted ? `
-                <div class="review-images">
-                    ${images.map(image => `
-                        <img src="/${image}" 
-                             alt="Review Image" 
-                             class="review-image"
-                             onclick="showImageModal('/${image}')">
-                    `).join('')}
-                </div>
-            ` : ''}
-
-            <div class="mt-3">
-                ${!isDeleted ? `
-                    <button class="btn btn-sm btn-info edit-review-btn" 
-                        data-review-id="${review.review_id}" 
-                        data-review-text="${encodeURIComponent(review.review_text || '')}"
-                        data-rating="${review.rating}">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-review-btn" 
-                        data-review-id="${review.review_id}">
-                        <i class="fas fa-trash"></i> Delete
-                    </button>
-                ` : `
-                    <button class="btn btn-sm btn-success restore-review-btn" 
-                        data-review-id="${review.review_id}">
-                        <i class="fas fa-undo"></i> Restore
-                    </button>
-                    <button class="btn btn-sm btn-danger permanently-delete-btn" 
-                        data-review-id="${review.review_id}">
-                        <i class="fas fa-times"></i> Delete Permanently
-                    </button>
-                `}
-            </div>
-        </div>
-    `;
-}).join('');
-
-
+                `;
+            }).join('');
 
             $('#reviewsList').html(html);
 
@@ -286,7 +283,7 @@ const html = reviewsRes.data.map(review => {
         $('#imageModal').modal('show');
     };
 
-    /// Edit review - enhanced with star rating functionality
+    // Edit review functionality
     $(document).on('click', '.edit-review-btn', function () {
         const reviewId = $(this).data('review-id');
         const reviewText = decodeURIComponent($(this).data('review-text'));
@@ -329,8 +326,6 @@ const html = reviewsRes.data.map(review => {
         });
     }
 
-    // Add this code to your existing myreviews.js file
-
     // Image preview functionality for edit modal
     $('#editReviewImages').on('change', function () {
         const files = this.files;
@@ -350,12 +345,12 @@ const html = reviewsRes.data.map(review => {
                 const reader = new FileReader();
                 reader.onload = function (e) {
                     const imgPreview = $(`
-                    <div class="image-preview-item d-inline-block me-2 mb-2 position-relative">
-                        <img src="${e.target.result}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
-                        <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-preview" 
-                                data-index="${i}" style="width: 20px; height: 20px; padding: 0; font-size: 12px;">×</button>
-                    </div>
-                `);
+                        <div class="image-preview-item d-inline-block me-2 mb-2 position-relative">
+                            <img src="${e.target.result}" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;">
+                            <button type="button" class="btn btn-danger btn-sm position-absolute top-0 end-0 remove-preview" 
+                                    data-index="${i}" style="width: 20px; height: 20px; padding: 0; font-size: 12px;">×</button>
+                        </div>
+                    `);
                     previewContainer.append(imgPreview);
                 };
                 reader.readAsDataURL(file);
@@ -382,7 +377,7 @@ const html = reviewsRes.data.map(review => {
         fileInput.files = dt.files;
     });
 
-    // Enhanced edit form submission with image upload
+    // Edit form submission with image upload
     $('#editReviewForm').off('submit').on('submit', function (e) {
         e.preventDefault();
 
@@ -426,7 +421,6 @@ const html = reviewsRes.data.map(review => {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`
-                // Don't set Content-Type for FormData, let jQuery handle it
             },
             data: formData,
             processData: false,
@@ -479,28 +473,6 @@ const html = reviewsRes.data.map(review => {
         $submitBtn.find('.spinner-border').addClass('d-none');
     }
 
-    // Enhanced edit review button click handler
-    $(document).on('click', '.edit-review-btn', function () {
-        const reviewId = $(this).data('review-id');
-        const reviewText = decodeURIComponent($(this).data('review-text'));
-        const rating = parseInt($(this).data('rating'));
-
-        // Set values in modal
-        $('#editReviewId').val(reviewId);
-        $('#editReviewText').val(reviewText);
-        $('#editRating').val(rating);
-
-        // Clear previous image selection and preview
-        $('#editReviewImages').val('');
-        $('#editImagePreview').empty();
-
-        // Initialize star rating display
-        updateEditRatingDisplay(rating);
-
-        // Show modal
-        $('#editReviewModal').modal('show');
-    });
-
     // Clear form when modal is closed
     $('#editReviewModal').on('hidden.bs.modal', function () {
         $('#editReviewForm')[0].reset();
@@ -509,40 +481,128 @@ const html = reviewsRes.data.map(review => {
         updateEditRatingDisplay(0);
     });
 
-
-
-    // Soft delete review (mark as deleted)
+    // Soft delete review
     $(document).on('click', '.delete-review-btn', function () {
-        if (!confirm('Are you sure you want to delete this review? You can restore it later.')) return;
         const reviewId = $(this).data('review-id');
-        $.ajax({
-            url: `${API_BASE_URL}/api/reviews/delete/${reviewId}`,
-            method: 'PUT',
-            headers: { 'Authorization': `Bearer ${token}` },
-            success: function (res) {
-                loadReviews();
-                alert('Review deleted successfully. You can restore it anytime.');
-            },
-            error: function () {
-                alert('Failed to delete review.');
+        
+        Swal.fire({
+            title: 'Delete Review',
+            text: 'Are you sure you want to delete this review? You can restore it later.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${API_BASE_URL}/api/reviews/delete/${reviewId}`,
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: function (res) {
+                        loadReviews();
+                        Swal.fire(
+                            'Deleted!',
+                            'Your review has been deleted. You can restore it anytime.',
+                            'success'
+                        );
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error!',
+                            'Failed to delete review.',
+                            'error'
+                        );
+                    }
+                });
             }
         });
     });
 
     // Restore review
     $(document).on('click', '.restore-review-btn', function () {
-        if (!confirm('Are you sure you want to restore this review?')) return;
+    const reviewId = $(this).data('review-id');
+    
+    Swal.fire({
+        title: 'Restore Review',
+        text: 'Are you sure you want to restore this review?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Yes, restore it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `${API_BASE_URL}/api/reviews/restore/${reviewId}`, // Matches your route
+                method: 'PATCH', // Changed from PUT to PATCH
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                success: function (res) {
+                    if (res.success) {
+                        loadReviews();
+                        Swal.fire(
+                            'Restored!',
+                            'Your review has been restored successfully.',
+                            'success'
+                        );
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            res.error || 'Failed to restore review.',
+                            'error'
+                        );
+                    }
+                },
+                error: function (xhr) {
+                    const errorMsg = xhr.responseJSON?.error || 'Failed to restore review.';
+                    Swal.fire(
+                        'Error!',
+                        errorMsg,
+                        'error'
+                    );
+                }
+            });
+        }
+    });
+});
+
+    // Permanently delete review
+    $(document).on('click', '.permanently-delete-btn', function () {
         const reviewId = $(this).data('review-id');
-        $.ajax({
-            url: `${API_BASE_URL}/api/reviews/${reviewId}/restore`,
-            method: 'PUT',
-            headers: { 'Authorization': `Bearer ${token}` },
-            success: function (res) {
-                loadReviews();
-                alert('Review restored successfully.');
-            },
-            error: function () {
-                alert('Failed to restore review.');
+        
+        Swal.fire({
+            title: 'Permanently Delete Review',
+            text: 'This action cannot be undone. Are you sure you want to permanently delete this review?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete permanently!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `${API_BASE_URL}/api/reviews/${reviewId}`,
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    success: function (res) {
+                        loadReviews();
+                        Swal.fire(
+                            'Deleted!',
+                            'Your review has been permanently deleted.',
+                            'success'
+                        );
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Error!',
+                            'Failed to permanently delete review.',
+                            'error'
+                        );
+                    }
+                });
             }
         });
     });

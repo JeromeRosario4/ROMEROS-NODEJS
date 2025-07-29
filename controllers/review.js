@@ -195,9 +195,10 @@ const getAllDeletedReviews = async (req, res) => {
 const getReviewsByCustomer = async (req, res) => {
     try {
         const customerId = req.params.customerId;
+        const includeDeleted = req.query.include_deleted === 'true';
 
-        // Get customer's reviews
-        const [reviews] = await db.promise().query(`
+        // Base query
+        let query = `
             SELECT 
                 r.review_id,
                 r.orderinfo_id,
@@ -212,9 +213,19 @@ const getReviewsByCustomer = async (req, res) => {
                 i.sell_price AS price
             FROM reviews r
             JOIN item i ON r.item_id = i.item_id
-            WHERE r.customer_id = ? AND r.deleted_at IS NULL
-            ORDER BY r.created_at DESC
-        `, [customerId]);
+            WHERE r.customer_id = ?
+        `;
+
+        // Add condition for deleted reviews if not including them
+        if (!includeDeleted) {
+            query += ` AND r.deleted_at IS NULL`;
+        }
+
+        // Add sorting
+        query += ` ORDER BY r.created_at DESC`;
+
+        // Get customer's reviews
+        const [reviews] = await db.promise().query(query, [customerId]);
 
         if (!reviews.length) {
             return res.status(200).json({
@@ -225,11 +236,18 @@ const getReviewsByCustomer = async (req, res) => {
 
         // Get review images in one query
         const reviewIds = reviews.map(r => r.review_id);
-        const [reviewImages] = await db.promise().query(`
+        let imageQuery = `
             SELECT review_id, image_path
             FROM review_images
-            WHERE review_id IN (?) AND deleted_at IS NULL
-        `, [reviewIds]);
+            WHERE review_id IN (?)
+        `;
+
+        // Conditionally include deleted images
+        if (!includeDeleted) {
+            imageQuery += ` AND deleted_at IS NULL`;
+        }
+
+        const [reviewImages] = await db.promise().query(imageQuery, [reviewIds]);
 
         // Group images by review_id
         const imagesByReview = reviewImages.reduce((acc, image) => {
@@ -374,17 +392,24 @@ const restoreReview = async (req, res) => {
     try {
         const reviewId = req.params.id;
 
+        // Check if review exists and is deleted
+        const [check] = await db.promise().execute(
+            `SELECT review_id FROM reviews WHERE review_id = ? AND deleted_at IS NOT NULL`,
+            [reviewId]
+        );
+
+        if (check.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: 'Review not found or already restored'
+            });
+        }
+
+        // Restore the review
         const [result] = await db.promise().execute(
             `UPDATE reviews SET deleted_at = NULL WHERE review_id = ?`,
             [reviewId]
         );
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                error: 'Review not found'
-            });
-        }
 
         return res.status(200).json({
             success: true,
@@ -392,7 +417,11 @@ const restoreReview = async (req, res) => {
         });
 
     } catch (err) {
-        return handleDbError(res, err, 'restoring review');
+        console.error('Error restoring review:', err);
+        return res.status(500).json({
+            success: false,
+            error: 'Internal server error'
+        });
     }
 };
 
