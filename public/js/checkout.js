@@ -16,13 +16,12 @@ $(document).ready(function () {
     $('#itemsTotal').text(itemsTotal.toFixed(2));
     $('#grandTotal').text(itemsTotal.toFixed(2));
     
-    // 🎨 Display items as cards
+    // Display items without images
     let cartHtml = '';
     checkoutCart.forEach(item => {
         const subtotal = item.price * item.quantity;
         cartHtml += `
             <div class="checkout-card">
-                <img src="/uploads/${item.image_path}" alt="${item.name}" onerror="this.src='/images/no-image.png'">
                 <div class="checkout-details">
                     <h6>${item.name}</h6>
                     <small>Price: ₱${parseFloat(item.price).toFixed(2)}</small><br>
@@ -49,7 +48,6 @@ $(document).ready(function () {
         console.error('Failed to load shipping regions:', error);
         alert('Failed to load shipping options. Please try again.');
     });
-    
     
     // Recalculate grand total when region changes
     $('#shippingRegion').on('change', function () {
