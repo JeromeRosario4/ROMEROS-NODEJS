@@ -11,48 +11,50 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="css/myreviews.css">
-    <style>
-    /* Modified to ensure all text is white except specific elements */
-    body,
-    body *:not(.alert-info):not(.alert-info *):not(.btn-close):not(.form-text):not(.text-muted):not(.text-warning):not(.text-success):not(.text-danger):not(.text-info) {
-      color: white !important;
-    }
-    
-    /* Rest of your existing CSS remains the same */
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;700&display=swap');
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;500;600;700;800;900&family=Exo+2:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
     
     :root {
-      --primary-blue: #2563eb;
-      --secondary-blue: #3b82f6;
-      --primary-purple: #7c3aed;
-      --secondary-purple: #8b5cf6;
-      --dark-bg: #0f172a;
-      --darker-bg: #020617;
-      --card-bg: #1e293b;
-      --text-primary: #ffffff; /* Changed from #f8fafc to pure white */
-      --text-secondary: #ffffff; /* Changed from #cbd5e1 to pure white */
-      --accent-cyan: #06b6d4;
-      --success-green: #10b981;
-      --warning-yellow: #f59e0b;
-      --danger-red: #ef4444;
+      --primary-blue: #0066ff;
+      --secondary-blue: #3399ff;
+      --primary-purple: #6a5acd;
+      --secondary-purple: #9370db;
+      --accent-cyan: #00e6ff;
+      --accent-pink: #ff6b9d;
+      --dark-bg: #0a0a0f;
+      --darker-bg: #05050a;
+      --card-bg: #1a1a2e;
+      --card-hover: #252546;
+      --text-primary: #ffffff;
+      --text-secondary: #ffffff;
+      --success-green: #00ff88;
+      --warning-yellow: #ffcc00;
+      --danger-red: #ff4757;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glow-primary: rgba(0, 102, 255, 0.4);
+      --glow-secondary: rgba(0, 230, 255, 0.4);
     }
 
-    /* Add this to ensure the alert keeps its original text color */
-    .alert-info,
-    .alert-info * {
-      color: inherit !important;
+    * {
+      box-sizing: border-box;
+      color: white;
     }
 
     body {
-      background: linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 102, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(106, 90, 205, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 90%, rgba(0, 230, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
       font-family: 'Exo 2', sans-serif;
-      color: var(--text-primary);
+      color: white;
       min-height: 100vh;
       position: relative;
       overflow-x: hidden;
     }
 
-    /* Animated background circuit pattern */
+    /* Enhanced animated background */
     body::before {
       content: '';
       position: fixed;
@@ -60,12 +62,12 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: 
-        radial-gradient(circle at 25% 25%, var(--primary-purple) 0%, transparent 50%),
-        radial-gradient(circle at 75% 75%, var(--primary-blue) 0%, transparent 50%);
-      opacity: 0.1;
-      z-index: -2;
-      animation: pulse 4s ease-in-out infinite alternate;
+      background: 
+        linear-gradient(90deg, transparent 24%, rgba(0, 102, 255, 0.03) 25%, rgba(0, 102, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(106, 90, 205, 0.03) 75%, rgba(106, 90, 205, 0.03) 76%, transparent 77%),
+        linear-gradient(transparent 24%, rgba(0, 230, 255, 0.02) 25%, rgba(0, 230, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 107, 157, 0.02) 75%, rgba(255, 107, 157, 0.02) 76%, transparent 77%);
+      background-size: 60px 60px, 80px 80px;
+      z-index: -1;
+      animation: grid-drift 25s linear infinite, pulse-grid 8s ease-in-out infinite alternate;
     }
 
     body::after {
@@ -75,41 +77,54 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: 
-        linear-gradient(90deg, transparent 24%, rgba(59, 130, 246, 0.05) 25%, rgba(59, 130, 246, 0.05) 26%, transparent 27%, transparent 74%, rgba(124, 58, 237, 0.05) 75%, rgba(124, 58, 237, 0.05) 76%, transparent 77%, transparent),
-        linear-gradient(transparent 24%, rgba(59, 130, 246, 0.05) 25%, rgba(59, 130, 246, 0.05) 26%, transparent 27%, transparent 74%, rgba(124, 58, 237, 0.05) 75%, rgba(124, 58, 237, 0.05) 76%, transparent 77%, transparent);
-      background-size: 50px 50px;
+      background: 
+        radial-gradient(circle at 15% 15%, var(--accent-cyan) 0%, transparent 25%),
+        radial-gradient(circle at 85% 85%, var(--primary-purple) 0%, transparent 25%),
+        radial-gradient(circle at 50% 20%, var(--accent-pink) 0%, transparent 20%);
+      opacity: 0.03;
       z-index: -1;
-      animation: grid-move 20s linear infinite;
+      animation: float-orbs 12s ease-in-out infinite;
     }
 
-    @keyframes pulse {
-      0% { opacity: 0.1; }
-      100% { opacity: 0.2; }
-    }
-
-    @keyframes grid-move {
+    @keyframes grid-drift {
       0% { transform: translate(0, 0); }
-      100% { transform: translate(50px, 50px); }
+      100% { transform: translate(60px, 60px); }
     }
 
-    @keyframes glow {
-      0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-      50% { box-shadow: 0 0 30px rgba(124, 58, 237, 0.5), 0 0 40px rgba(59, 130, 246, 0.3); }
+    @keyframes pulse-grid {
+      0% { opacity: 0.3; }
+      100% { opacity: 0.6; }
     }
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+    @keyframes float-orbs {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      33% { transform: rotate(120deg) scale(1.1); }
+      66% { transform: rotate(240deg) scale(0.9); }
     }
 
-    /* Header styling */
+    /* Enhanced glassmorphism effects */
+    .glass-card {
+      background: linear-gradient(135deg, var(--glass-bg) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Enhanced header */
     .page-header {
-      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
-      padding: 2rem 0;
+      background: linear-gradient(135deg, 
+        rgba(0, 102, 255, 0.2) 0%, 
+        rgba(106, 90, 205, 0.2) 50%, 
+        rgba(0, 230, 255, 0.2) 100%);
+      backdrop-filter: blur(30px);
+      padding: 3rem 0;
       margin-bottom: 2rem;
       position: relative;
       overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .page-header::before {
@@ -119,57 +134,71 @@
       left: -50%;
       width: 200%;
       height: 200%;
-      background: repeating-linear-gradient(
-        45deg,
-        transparent,
-        transparent 2px,
-        rgba(255, 255, 255, 0.03) 2px,
-        rgba(255, 255, 255, 0.03) 4px
-      );
-      animation: scan 3s linear infinite;
+      background: 
+        conic-gradient(from 0deg, transparent, rgba(0, 230, 255, 0.1), transparent, rgba(106, 90, 205, 0.1), transparent);
+      animation: rotate-gradient 20s linear infinite;
     }
 
-    @keyframes scan {
-      0% { transform: translate(-50%, -50%) rotate(0deg); }
-      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    @keyframes rotate-gradient {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
     .page-title {
       font-family: 'Orbitron', monospace;
-      font-weight: 900;
-      font-size: 2.5rem;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+      font-weight: 800;
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-blue), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(0, 230, 255, 0.3);
       position: relative;
       z-index: 2;
+      animation: title-glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes title-glow {
+      0% { filter: drop-shadow(0 0 10px rgba(0, 230, 255, 0.3)); }
+      100% { filter: drop-shadow(0 0 20px rgba(106, 90, 205, 0.5)); }
     }
 
     .robot-icon {
-      font-size: 3rem;
-      animation: float 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 10px var(--accent-cyan));
+      font-size: 4rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: float-icon 4s ease-in-out infinite, icon-pulse 2s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 15px var(--glow-secondary));
     }
 
-    /* Custom buttons */
+    @keyframes float-icon {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-15px) rotate(2deg); }
+      50% { transform: translateY(-5px) rotate(-1deg); }
+      75% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    @keyframes icon-pulse {
+      0% { filter: drop-shadow(0 0 15px var(--glow-secondary)); }
+      100% { filter: drop-shadow(0 0 25px var(--glow-primary)); }
+    }
+
+    /* Enhanced buttons */
     .btn-robot {
-      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 50%, var(--accent-cyan) 100%);
       border: none;
       color: white;
       font-family: 'Orbitron', monospace;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 12px 24px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
+      letter-spacing: 2px;
+      padding: 14px 28px;
+      border-radius: 50px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-    }
-
-    .btn-robot:hover {
-      background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--primary-purple) 100%);
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
-      color: white;
+      box-shadow: 0 4px 15px var(--glow-primary);
     }
 
     .btn-robot::before {
@@ -179,45 +208,96 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: all 0.5s;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.6s ease;
+    }
+
+    .btn-robot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+    }
+
+    .btn-robot:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px var(--glow-secondary);
+      color: white;
     }
 
     .btn-robot:hover::before {
       left: 100%;
     }
 
+    .btn-robot:hover::after {
+      opacity: 1;
+    }
+
+    .btn-robot:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
     .btn-robot-outline {
       background: transparent;
-      border: 2px solid var(--primary-blue);
-      color: var(--accent-cyan);
+      border: 2px solid transparent;
+      background-image: linear-gradient(var(--card-bg), var(--card-bg)), 
+                        linear-gradient(135deg, var(--accent-cyan), var(--primary-blue), var(--primary-purple));
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      color: white;
       font-family: 'Orbitron', monospace;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 10px 22px;
-      border-radius: 8px;
-      transition: all 0.3s ease;
+      letter-spacing: 2px;
+      padding: 12px 26px;
+      border-radius: 50px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-robot-outline::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      border-radius: 50px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
     }
 
     .btn-robot-outline:hover {
-      background: var(--primary-blue);
       color: white;
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
       transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--glow-secondary);
     }
 
-    /* Review cards */
+    .btn-robot-outline:hover::before {
+      opacity: 1;
+    }
+
+    /* Enhanced review cards */
     .review-card {
-      background: linear-gradient(135deg, var(--card-bg) 0%, rgba(30, 41, 59, 0.8) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.2);
-      border-radius: 16px;
-      padding: 24px;
-      margin-bottom: 24px;
-      transition: all 0.3s ease;
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.9) 0%, 
+        rgba(37, 37, 70, 0.7) 50%, 
+        rgba(26, 26, 46, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 28px;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
     .review-card::before {
@@ -226,42 +306,78 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple), var(--accent-cyan));
+      height: 3px;
+      background: linear-gradient(90deg, 
+        var(--accent-cyan) 0%, 
+        var(--primary-blue) 25%, 
+        var(--primary-purple) 50%, 
+        var(--accent-pink) 75%, 
+        var(--accent-cyan) 100%);
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.5s ease;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .review-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, 
+        rgba(0, 230, 255, 0.05) 0%, 
+        transparent 50%, 
+        rgba(106, 90, 205, 0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      border-radius: 24px;
+      pointer-events: none;
     }
 
     .review-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(59, 130, 246, 0.2);
-      border-color: rgba(124, 58, 237, 0.4);
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.4),
+        0 0 30px var(--glow-secondary),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(0, 230, 255, 0.3);
     }
 
     .review-card:hover::before {
       opacity: 1;
     }
 
-    .review-card.deleted {
-      background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(30, 41, 59, 0.8) 100%);
-      border-color: var(--warning-yellow);
-      opacity: 0.8;
-    }
-
-    .review-card.deleted::before {
-      background: var(--warning-yellow);
+    .review-card:hover::after {
       opacity: 1;
     }
 
-    /* Robot-themed info alerts */
+    .review-card.deleted {
+      background: linear-gradient(135deg, 
+        rgba(255, 204, 0, 0.1) 0%, 
+        rgba(26, 26, 46, 0.9) 50%, 
+        rgba(255, 204, 0, 0.1) 100%);
+      border-color: var(--warning-yellow);
+      animation: deleted-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes deleted-pulse {
+      0%, 100% { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 204, 0, 0.2); }
+      50% { box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 204, 0, 0.4); }
+    }
+
+    /* Enhanced alerts */
     .alert-robot {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+      background: linear-gradient(135deg, 
+        rgba(0, 230, 255, 0.1) 0%, 
+        rgba(0, 102, 255, 0.05) 50%, 
+        rgba(106, 90, 205, 0.1) 100%);
+      backdrop-filter: blur(15px);
       border: 1px solid var(--accent-cyan);
-      border-radius: 12px;
-      color: var(--text-primary);
-      font-family: 'Orbitron', monospace;
+      border-radius: 16px;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0, 230, 255, 0.1);
     }
 
     .alert-robot::before {
@@ -271,8 +387,8 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
-      animation: scan-alert 3s ease-in-out infinite;
+      background: linear-gradient(90deg, transparent, rgba(0, 230, 255, 0.2), transparent);
+      animation: scan-alert 4s ease-in-out infinite;
     }
 
     @keyframes scan-alert {
@@ -281,135 +397,197 @@
       100% { left: 100%; }
     }
 
-    /* Rating stars */
+    /* Enhanced rating stars */
     .rating-stars i {
       cursor: pointer;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       color: var(--warning-yellow);
-      transition: all 0.2s ease;
-      filter: drop-shadow(0 0 5px rgba(245, 158, 11, 0.5));
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.4));
+      margin: 0 2px;
     }
 
     .rating-stars i:hover {
-      transform: scale(1.2);
-      filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.8));
+      transform: scale(1.3) rotate(15deg);
+      filter: drop-shadow(0 0 15px rgba(255, 204, 0, 0.8));
+      color: #ffdd00;
     }
 
-    /* Images */
+    .rating-stars i.filled {
+      color: #ffdd00;
+      animation: star-twinkle 2s ease-in-out infinite;
+    }
+
+    @keyframes star-twinkle {
+      0%, 100% { filter: drop-shadow(0 0 8px rgba(255, 204, 0, 0.4)); }
+      50% { filter: drop-shadow(0 0 15px rgba(255, 204, 0, 0.8)); }
+    }
+
+    /* Enhanced images */
     .review-images {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px;
+      gap: 15px;
+      margin-top: 20px;
     }
 
     .review-image {
-      width: 100px;
-      height: 100px;
+      width: 120px;
+      height: 120px;
       object-fit: cover;
       cursor: pointer;
-      border-radius: 8px;
-      border: 2px solid var(--primary-blue);
-      transition: all 0.3s ease;
-      filter: brightness(0.9);
+      border-radius: 16px;
+      border: 2px solid rgba(0, 230, 255, 0.3);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      filter: brightness(0.9) saturate(1.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .review-image::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, transparent, rgba(0, 230, 255, 0.2), transparent);
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
 
     .review-image:hover {
-      transform: scale(1.05) rotate(2deg);
+      transform: scale(1.08) rotate(3deg);
       border-color: var(--accent-cyan);
-      filter: brightness(1.1);
-      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+      filter: brightness(1.1) saturate(1.3);
+      box-shadow: 0 15px 35px rgba(0, 230, 255, 0.3);
     }
 
-    /* Badges */
+    .review-image:hover::before {
+      opacity: 1;
+    }
+
+    /* Enhanced badges */
     .badge-robot {
       background: linear-gradient(135deg, var(--primary-purple) 0%, var(--secondary-purple) 100%);
       font-family: 'Orbitron', monospace;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
+      letter-spacing: 1.5px;
+      padding: 10px 16px;
+      border-radius: 25px;
+      font-size: 0.8rem;
+      box-shadow: 0 4px 15px rgba(106, 90, 205, 0.3);
+      animation: badge-glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes badge-glow {
+      0% { box-shadow: 0 4px 15px rgba(106, 90, 205, 0.3); }
+      100% { box-shadow: 0 6px 20px rgba(106, 90, 205, 0.5); }
     }
 
     .badge-deleted {
-      background: linear-gradient(135deg, var(--warning-yellow) 0%, #fbbf24 100%);
+      background: linear-gradient(135deg, var(--warning-yellow) 0%, #ffdd00 100%);
       color: var(--darker-bg);
-      animation: glow-warning 2s ease-in-out infinite alternate;
+      animation: deleted-badge-pulse 2s ease-in-out infinite;
     }
 
-    @keyframes glow-warning {
-      0% { box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
-      100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.8); }
+    @keyframes deleted-badge-pulse {
+      0%, 100% { 
+        box-shadow: 0 4px 15px rgba(255, 204, 0, 0.4);
+        transform: scale(1);
+      }
+      50% { 
+        box-shadow: 0 6px 25px rgba(255, 204, 0, 0.7);
+        transform: scale(1.05);
+      }
     }
 
-    /* Modal styling */
+    /* Enhanced modal styling */
     .modal-content {
-      background: linear-gradient(135deg, var(--card-bg) 0%, var(--dark-bg) 100%);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 16px;
-      color: var(--text-primary);
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.95) 0%, 
+        rgba(15, 15, 35, 0.95) 100%);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(0, 230, 255, 0.2);
+      border-radius: 24px;
+      color: white;
+      box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(0, 230, 255, 0.1);
     }
 
     .modal-header {
-      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
-      border-bottom: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 16px 16px 0 0;
+      background: linear-gradient(135deg, 
+        rgba(0, 102, 255, 0.2) 0%, 
+        rgba(106, 90, 205, 0.2) 100%);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 230, 255, 0.2);
+      border-radius: 24px 24px 0 0;
+      padding: 24px;
     }
 
     .modal-title {
       font-family: 'Orbitron', monospace;
       font-weight: 700;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .btn-close {
-      filter: invert(1);
+      filter: invert(1) brightness(1.5);
+      transition: all 0.3s ease;
     }
 
-    /* Form controls */
+    .btn-close:hover {
+      transform: scale(1.1) rotate(90deg);
+      filter: invert(1) brightness(2);
+    }
+
+    /* Enhanced form controls */
     .form-control {
-      background: rgba(30, 41, 59, 0.8);
-      border: 1px solid rgba(59, 130, 246, 0.3);
-      border-radius: 8px;
-      color: var(--text-primary);
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(0, 230, 255, 0.2);
+      border-radius: 12px;
+      color: white;
       font-family: 'Exo 2', sans-serif;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
     }
 
     .form-control:focus {
-      background: rgba(30, 41, 59, 0.9);
+      background: rgba(26, 26, 46, 0.9);
       border-color: var(--accent-cyan);
-      color: var(--text-primary);
-      box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+      color: white;
+      box-shadow: 0 0 20px rgba(0, 230, 255, 0.2);
+      transform: scale(1.02);
     }
 
     .form-label {
       font-family: 'Orbitron', monospace;
       font-weight: 600;
-      color: var(--accent-cyan);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    /* Enhanced restore button */
+    .restore-btn {
+      background: linear-gradient(135deg, var(--success-green) 0%, #00cc66 100%);
+      border: none;
+      color: white;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 1px;
-      font-size: 0.9rem;
-    }
-
-    /* No reviews state */
-    .no-reviews {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-secondary);
-    }
-
-    .no-reviews .robot-icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-      opacity: 0.5;
-    }
-
-    /* Restore button special effects */
-    .restore-btn {
-      background: linear-gradient(135deg, var(--success-green) 0%, #34d399 100%);
+      padding: 12px 24px;
+      border-radius: 50px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
     }
 
     .restore-btn::after {
@@ -419,151 +597,322 @@
       left: -60%;
       width: 200%;
       height: 200%;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.3);
       transform: rotate(30deg);
-      transition: all 0.3s;
+      transition: all 0.5s ease;
+    }
+
+    .restore-btn:hover {
+      background: linear-gradient(135deg, #00cc66 0%, var(--success-green) 100%);
+      box-shadow: 0 10px 30px rgba(0, 255, 136, 0.5);
+      transform: translateY(-3px) scale(1.05);
+      color: white;
     }
 
     .restore-btn:hover::after {
       left: 100%;
     }
 
-    .restore-btn:hover {
-      background: linear-gradient(135deg, #34d399 0%, var(--success-green) 100%);
-      box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4);
-    }
-
-    /* Scrollbar styling */
+    /* Enhanced scrollbar */
     ::-webkit-scrollbar {
-      width: 8px;
+      width: 10px;
     }
 
     ::-webkit-scrollbar-track {
       background: var(--darker-bg);
+      border-radius: 10px;
     }
 
     ::-webkit-scrollbar-thumb {
       background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
-      border-radius: 4px;
+      border-radius: 10px;
+      border: 2px solid var(--darker-bg);
     }
 
     ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(135deg, var(--secondary-blue) 0%, var(--secondary-purple) 100%);
+      background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-pink) 100%);
     }
 
-    /* Loading animation */
+    /* Enhanced loading spinner */
     .loading-spinner {
       display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.2);
       border-radius: 50%;
       border-top-color: var(--accent-cyan);
-      animation: spin 1s ease-in-out infinite;
+      animation: advanced-spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes advanced-spin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
     }
 
-    /* Responsive design */
+    /* Floating action button */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(0, 230, 255, 0.3);
+      z-index: 1000;
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(180deg);
+      box-shadow: 0 15px 40px rgba(0, 230, 255, 0.5);
+    }
+
+    /* Enhanced no reviews state */
+    .no-reviews {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: white;
+    }
+
+    .no-reviews .robot-icon {
+      font-size: 5rem;
+      margin-bottom: 2rem;
+      opacity: 0.3;
+      animation: no-reviews-float 6s ease-in-out infinite;
+    }
+
+    @keyframes no-reviews-float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(5deg); }
+      66% { transform: translateY(-10px) rotate(-3deg); }
+    }
+
+    /* Responsive enhancements */
     @media (max-width: 768px) {
       .page-title {
-        font-size: 2rem;
+        font-size: 2.2rem;
       }
       
       .robot-icon {
-        font-size: 2rem;
+        font-size: 3rem;
       }
       
       .review-card {
-        padding: 16px;
-        margin-bottom: 16px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 16px;
       }
+
+      .btn-robot, .btn-robot-outline {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+      }
+
+      .fab {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 1.2rem;
+      }
+
+      .review-image {
+        width: 100px;
+        height: 100px;
+      }
+    }
+
+    /* Micro-interactions */
+    .interactive-element {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .interactive-element:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Enhanced text effects */
+    .glow-text {
+      text-shadow: 0 0 10px currentColor;
+      animation: text-glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes text-glow {
+      0% { text-shadow: 0 0 10px currentColor; }
+      100% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+    }
+
+    /* Parallax effect for cards */
+    .parallax-card {
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease;
+    }
+
+    .parallax-card:hover {
+      transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+    }
+
+    /* Enhanced focus states for accessibility */
+    .btn-robot:focus,
+    .btn-robot-outline:focus,
+    .form-control:focus {
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 2px;
+    }
+
+    /* Success animation for restore */
+    @keyframes success-bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    .success-animation {
+      animation: success-bounce 1s ease;
     }
   </style>
 </head>
 <body>
   <div id="header"></div>
 
+  <!-- Enhanced header section -->
+  <div class="page-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="page-title mb-2">
+            <i class="fas fa-robot robot-icon me-3"></i>
+            Romeros Reviews
+          </h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2><i class="fas fa-star text-warning me-2"></i>My Reviews</h2>
+      <h2 class="glow-text">
+        <i class="fas fa-star text-warning me-2"></i>My Reviews
+      </h2>
       <div>
-        <a href="/myorders.html" class="btn btn-outline-primary me-2">
+        <a href="/myorders.html" class="btn btn-robot interactive-element">
           <i class="fas fa-arrow-left me-2"></i>Back to Orders
         </a>
       </div>
     </div>
     
-    <div class="alert alert-info mb-3">
+    <div class="alert alert-robot mb-4">
       <i class="fas fa-info-circle me-2"></i>
-      Deleted reviews are marked with a yellow badge and can be restored.
+      <strong>System Status:</strong> Deleted reviews are marked with quantum badges and can be restored using neural recovery protocols.
     </div>
     
     <div id="reviewsList"></div>
+    
+    <!-- Enhanced no reviews state -->
+    <div class="no-reviews d-none" id="noReviewsState">
+      <i class="fas fa-robot robot-icon"></i>
+      <h3 class="mb-3">No Reviews Found</h3>
+      <p class="lead mb-4">Your review database is currently empty. Start by making some purchases and sharing your experiences!</p>
+      <a href="/products.html" class="btn btn-robot">
+        <i class="fas fa-shopping-cart me-2"></i>Explore Products
+      </a>
+    </div>
   </div>
 
-  <!-- Image Modal -->
+  <!-- Floating action button for quick actions -->
+  <button class="fab" id="quickActionsBtn" title="Quick Actions">
+    <i class="fas fa-plus"></i>
+  </button>
+
+  <!-- Enhanced Image Modal -->
   <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
+      <div class="modal-content glass-card">
         <div class="modal-header">
-          <h5 class="modal-title" id="imageModalLabel">Review Image</h5>
+          <h5 class="modal-title" id="imageModalLabel">
+            <i class="fas fa-image me-2"></i>Review Image Analysis
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body text-center">
-          <img id="modalImage" src="" alt="Review Image" class="img-fluid">
+        <div class="modal-body text-center p-4">
+          <img id="modalImage" src="" alt="Review Image" class="img-fluid rounded-3 shadow-lg">
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-robot-outline" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Close
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Edit Review Modal -->
+  <!-- Enhanced Edit Review Modal -->
   <div class="modal fade" id="editReviewModal" tabindex="-1" aria-labelledby="editReviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content glass-card">
         <div class="modal-header">
-          <h5 class="modal-title" id="editReviewModalLabel">Edit Review</h5>
+          <h5 class="modal-title" id="editReviewModalLabel">
+            <i class="fas fa-edit me-2"></i>Neural Review Editor
+          </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form id="editReviewForm">
-          <div class="modal-body">
+          <div class="modal-body p-4">
             <input type="hidden" id="editReviewId">
             
-            <div class="mb-3">
-              <label for="editRating" class="form-label">Rating</label>
-              <div class="rating-stars mb-2">
+            <div class="mb-4">
+              <label for="editRating" class="form-label">
+                <i class="fas fa-star me-2"></i>Rating Assessment
+              </label>
+              <div class="rating-stars mb-3">
                 <i class="far fa-star" data-rating="1"></i>
                 <i class="far fa-star" data-rating="2"></i>
                 <i class="far fa-star" data-rating="3"></i>
                 <i class="far fa-star" data-rating="4"></i>
                 <i class="far fa-star" data-rating="5"></i>
                 <input type="hidden" id="editRating" name="rating" value="0">
-                <span id="editRatingDescription" class="ms-2 text-muted">Not rated</span>
+                <span id="editRatingDescription" class="ms-3 text-muted fst-italic">Neural network awaiting input</span>
               </div>
             </div>
             
-            <div class="mb-3">
-              <label for="editReviewText" class="form-label">Review</label>
-              <textarea class="form-control" id="editReviewText" name="review_text" rows="5" required></textarea>
-              <div class="form-text">Minimum 20 characters</div>
+            <div class="mb-4">
+              <label for="editReviewText" class="form-label">
+                <i class="fas fa-comment-dots me-2"></i>Review Content
+              </label>
+              <textarea class="form-control" id="editReviewText" name="review_text" rows="6" required 
+                placeholder="Share your detailed experience with this product..."></textarea>
+              <div class="form-text">
+                <i class="fas fa-info-circle me-1"></i>Minimum 20 characters for optimal neural processing
+              </div>
             </div>
             
-            <div class="mb-3">
-              <label for="editReviewImages" class="form-label">Update Images (optional)</label>
-              <input type="file" id="editReviewImages" name="images" accept="image/jpeg,image/png" multiple class="form-control">
-              <div class="form-text">Max 5 images (JPEG or PNG)</div>
-              <div id="editImagePreview" class="mt-2 d-flex flex-wrap gap-2"></div>
+            <div class="mb-4">
+              <label for="editReviewImages" class="form-label">
+                <i class="fas fa-images me-2"></i>Visual Data Upload
+              </label>
+              <input type="file" id="editReviewImages" name="images" accept="image/jpeg,image/png" multiple 
+                class="form-control">
+              <div class="form-text">
+                <i class="fas fa-upload me-1"></i>Maximum 5 images (JPEG or PNG format) • Neural compression applied
+              </div>
+              <div id="editImagePreview" class="mt-3 d-flex flex-wrap gap-3"></div>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary">
-              <span class="submit-text">Save Changes</span>
+          <div class="modal-footer p-4">
+            <button type="button" class="btn btn-robot-outline" data-bs-dismiss="modal">
+              <i class="fas fa-times me-2"></i>Cancel Operation
+            </button>
+            <button type="submit" class="btn btn-robot">
+              <span class="submit-text">
+                <i class="fas fa-save me-2"></i>Execute Changes
+              </span>
               <span class="spinner-border spinner-border-sm d-none"></span>
             </button>
           </div>
@@ -572,22 +921,32 @@
     </div>
   </div>
 
-  <!-- Restore Confirmation Modal -->
+  <!-- Enhanced Restore Confirmation Modal -->
   <div class="modal fade" id="restoreConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title"><i class="fas fa-undo me-2"></i>Restore Review</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-content glass-card">
+        <div class="modal-header" style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 204, 102, 0.2) 100%);">
+          <h5 class="modal-title">
+            <i class="fas fa-undo me-2"></i>Neural Recovery Protocol
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body">
-          <p>Are you sure you want to restore this review?</p>
-          <p class="small text-muted"><i class="fas fa-info-circle me-1"></i>The review will be visible to others again.</p>
+        <div class="modal-body p-4">
+          <div class="text-center mb-4">
+            <i class="fas fa-robot" style="font-size: 3rem; color: var(--success-green);"></i>
+          </div>
+          <p class="text-center mb-3">Initiate quantum recovery sequence for this review?</p>
+          <div class="alert alert-robot">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Recovery Info:</strong> The review will be restored to active status and become visible to other users in the neural network.
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" id="confirmRestoreBtn" class="btn btn-success">
-            <i class="fas fa-undo me-1"></i>Restore
+        <div class="modal-footer p-4">
+          <button type="button" class="btn btn-robot-outline" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Abort
+          </button>
+          <button type="button" id="confirmRestoreBtn" class="btn restore-btn">
+            <i class="fas fa-undo me-2"></i>Execute Recovery
           </button>
         </div>
       </div>
@@ -596,10 +955,11 @@
 
   <script src="js/myreviews.js"></script>
   <script>
-    // Additional JavaScript for toggling deleted reviews visibility
+    // Enhanced JavaScript with modern effects
     $(document).ready(function() {
       let showDeleted = true;
       
+      // Enhanced toggle functionality
       $('#toggleDeletedBtn').click(function() {
         showDeleted = !showDeleted;
         $(this).html(`
@@ -608,18 +968,219 @@
         `);
         
         if (showDeleted) {
-          $('.review-card.deleted').show();
+          $('.review-card.deleted').fadeIn(300);
         } else {
-          $('.review-card.deleted').hide();
+          $('.review-card.deleted').fadeOut(300);
         }
       });
+
+      // Floating action button functionality
+      $('#quickActionsBtn').click(function() {
+        $(this).addClass('animate__animated animate__pulse');
+        setTimeout(() => {
+          $(this).removeClass('animate__animated animate__pulse');
+        }, 600);
+        
+        // Add quick action menu here
+        Swal.fire({
+          title: 'Quick Actions',
+          html: `
+            <div class="d-grid gap-2">
+              <button class="btn btn-robot" onclick="window.location.href='/products.html'">
+                <i class="fas fa-shopping-cart me-2"></i>Browse Products
+              </button>
+              <button class="btn btn-robot-outline" onclick="scrollToTop()">
+                <i class="fas fa-arrow-up me-2"></i>Scroll to Top
+              </button>
+            </div>
+          `,
+          showConfirmButton: false,
+          background: 'rgba(26, 26, 46, 0.95)',
+          color: '#ffffff',
+          customClass: {
+            popup: 'glass-card'
+          }
+        });
+      });
+
+      // Enhanced rating stars interaction
+      $('.rating-stars i').hover(function() {
+        const rating = $(this).data('rating');
+        $(this).prevAll().addBack().addClass('text-warning');
+        $(this).nextAll().removeClass('text-warning');
+      });
+
+      // Enhanced image preview with animation
+      $('input[type="file"]').change(function() {
+        const files = this.files;
+        const preview = $(this).siblings('#editImagePreview');
+        preview.empty();
+
+        Array.from(files).forEach((file, index) => {
+          if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              const img = $(`
+                <div class="position-relative" style="animation: fadeInUp 0.5s ease ${index * 0.1}s both;">
+                  <img src="${e.target.result}" class="review-image" style="width: 80px; height: 80px;">
+                  <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 rounded-circle" 
+                          style="width: 25px; height: 25px; padding: 0; margin: -5px;">
+                    <i class="fas fa-times" style="font-size: 0.7rem;"></i>
+                  </button>
+                </div>
+              `);
+              preview.append(img);
+            };
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+
+      // Enhanced form validation with visual feedback
+      $('#editReviewForm').submit(function(e) {
+        e.preventDefault();
+        const submitBtn = $(this).find('button[type="submit"]');
+        const submitText = submitBtn.find('.submit-text');
+        const spinner = submitBtn.find('.spinner-border');
+        
+        submitText.addClass('d-none');
+        spinner.removeClass('d-none');
+        submitBtn.prop('disabled', true);
+        
+        // Simulate API call
+        setTimeout(() => {
+          submitText.removeClass('d-none');
+          spinner.addClass('d-none');
+          submitBtn.prop('disabled', false);
+          
+          Swal.fire({
+            title: 'Success!',
+            text: 'Review updated successfully',
+            icon: 'success',
+            background: 'rgba(26, 26, 46, 0.95)',
+            color: '#ffffff',
+            confirmButtonClass: 'btn btn-robot'
+          });
+          
+          $('#editReviewModal').modal('hide');
+        }, 2000);
+      });
+
+      // Parallax effect for review cards
+      $('.review-card').addClass('parallax-card');
+      
+      // Enhanced scroll animations
+      $(window).scroll(function() {
+        const scrolled = $(this).scrollTop();
+        const parallax = $('.page-header');
+        const speed = scrolled * 0.5;
+        parallax.css('transform', `translateY(${speed}px)`);
+      });
+
+      // Add particle effect on hover for special elements
+      $('.btn-robot, .review-card').hover(function() {
+        createParticles(this);
+      });
+
+      function createParticles(element) {
+        const rect = element.getBoundingClientRect();
+        for (let i = 0; i < 5; i++) {
+          const particle = $('<div>').css({
+            position: 'fixed',
+            left: rect.left + Math.random() * rect.width,
+            top: rect.top + Math.random() * rect.height,
+            width: '4px',
+            height: '4px',
+            background: 'var(--accent-cyan)',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+            zIndex: 9999,
+            animation: 'particle-float 1s ease-out forwards'
+          });
+          
+          $('body').append(particle);
+          setTimeout(() => particle.remove(), 1000);
+        }
+      }
+
+      // Add CSS for particle animation
+      if (!$('#particle-style').length) {
+        $('<style id="particle-style">').text(`
+          @keyframes particle-float {
+            0% { 
+              opacity: 1; 
+              transform: translateY(0) scale(1); 
+            }
+            100% { 
+              opacity: 0; 
+              transform: translateY(-50px) scale(0); 
+            }
+          }
+          
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `).appendTo('head');
+      }
     });
     
-    // Global function for showing image modal
+    // Global function for showing enhanced image modal
     window.showImageModal = function(imageSrc) {
       $('#modalImage').attr('src', imageSrc);
       $('#imageModal').modal('show');
     };
+
+    // Scroll to top function
+    window.scrollToTop = function() {
+      $('html, body').animate({scrollTop: 0}, 800);
+    };
+
+    // Enhanced restore functionality
+    window.restoreReview = function(reviewId) {
+      $('#restoreConfirmModal').modal('show');
+      $('#confirmRestoreBtn').off('click').on('click', function() {
+        $(this).html('<i class="loading-spinner me-2"></i>Processing...');
+        
+        setTimeout(() => {
+          $(this).html('<i class="fas fa-check me-2"></i>Restored!');
+          $(`.review-card[data-review-id="${reviewId}"]`).addClass('success-animation');
+          
+          setTimeout(() => {
+            $('#restoreConfirmModal').modal('hide');
+            $(this).html('<i class="fas fa-undo me-2"></i>Execute Recovery');
+          }, 1000);
+        }, 1500);
+      });
+    };
+
+    // Add custom cursor effect
+    $(document).mousemove(function(e) {
+      if (!$('#custom-cursor').length) {
+        $('<div id="custom-cursor">').css({
+          position: 'fixed',
+          width: '20px',
+          height: '20px',
+          background: 'radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%)',
+          borderRadius: '50%',
+          pointerEvents: 'none',
+          zIndex: 10000,
+          opacity: 0.3,
+          transition: 'transform 0.1s ease'
+        }).appendTo('body');
+      }
+      
+      $('#custom-cursor').css({
+        left: e.clientX - 10,
+        top: e.clientY - 10
+      });
+    });
   </script>
 </body>
 </html>

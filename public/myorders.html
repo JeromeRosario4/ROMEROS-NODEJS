@@ -9,25 +9,1116 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"
     integrity="sha512-LGHBR+kJ5jZSIzhhdfytPoEHzgaYuTRifq9g5l6ja6/k9NAOsAi5dQh4zQF6JIRB8cAYxTRedERUF+97/KuivQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="js/myorders.js"></script>
-  <link rel="stylesheet" href="css/myorders.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/ 6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/v4-shims.min.css">
-</head>
-<body>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <style>
-   
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;500;600;700;800;900&family=Exo+2:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary-blue: #0066ff;
+      --secondary-blue: #3399ff;
+      --primary-purple: #6a5acd;
+      --secondary-purple: #9370db;
+      --accent-cyan: #00e6ff;
+      --accent-pink: #ff6b9d;
+      --dark-bg: #0a0a0f;
+      --darker-bg: #05050a;
+      --card-bg: #1a1a2e;
+      --card-hover: #252546;
+      --text-primary: #ffffff;
+      --text-secondary: #ffffff;
+      --success-green: #00ff88;
+      --warning-yellow: #ffcc00;
+      --danger-red: #ff4757;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glow-primary: rgba(0, 102, 255, 0.4);
+      --glow-secondary: rgba(0, 230, 255, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      color: white;
+    }
+
+    body {
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 102, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(106, 90, 205, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 90%, rgba(0, 230, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+      font-family: 'Exo 2', sans-serif;
+      color: white;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Enhanced animated background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(90deg, transparent 24%, rgba(0, 102, 255, 0.03) 25%, rgba(0, 102, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(106, 90, 205, 0.03) 75%, rgba(106, 90, 205, 0.03) 76%, transparent 77%),
+        linear-gradient(transparent 24%, rgba(0, 230, 255, 0.02) 25%, rgba(0, 230, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 107, 157, 0.02) 75%, rgba(255, 107, 157, 0.02) 76%, transparent 77%);
+      background-size: 60px 60px, 80px 80px;
+      z-index: -1;
+      animation: grid-drift 25s linear infinite, pulse-grid 8s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 15% 15%, var(--accent-cyan) 0%, transparent 25%),
+        radial-gradient(circle at 85% 85%, var(--primary-purple) 0%, transparent 25%),
+        radial-gradient(circle at 50% 20%, var(--accent-pink) 0%, transparent 20%);
+      opacity: 0.03;
+      z-index: -1;
+      animation: float-orbs 12s ease-in-out infinite;
+    }
+
+    @keyframes grid-drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(60px, 60px); }
+    }
+
+    @keyframes pulse-grid {
+      0% { opacity: 0.3; }
+      100% { opacity: 0.6; }
+    }
+
+    @keyframes float-orbs {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      33% { transform: rotate(120deg) scale(1.1); }
+      66% { transform: rotate(240deg) scale(0.9); }
+    }
+
+    /* Enhanced glassmorphism effects */
+    .glass-card {
+      background: linear-gradient(135deg, var(--glass-bg) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Enhanced header */
+    .page-header {
+      background: linear-gradient(135deg, 
+        rgba(0, 102, 255, 0.2) 0%, 
+        rgba(106, 90, 205, 0.2) 50%, 
+        rgba(0, 230, 255, 0.2) 100%);
+      backdrop-filter: blur(30px);
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        conic-gradient(from 0deg, transparent, rgba(0, 230, 255, 0.1), transparent, rgba(106, 90, 205, 0.1), transparent);
+      animation: rotate-gradient 20s linear infinite;
+    }
+
+    @keyframes rotate-gradient {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .page-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-blue), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(0, 230, 255, 0.3);
+      position: relative;
+      z-index: 2;
+      animation: title-glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes title-glow {
+      0% { filter: drop-shadow(0 0 10px rgba(0, 230, 255, 0.3)); }
+      100% { filter: drop-shadow(0 0 20px rgba(106, 90, 205, 0.5)); }
+    }
+
+    .robot-icon {
+      font-size: 4rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: float-icon 4s ease-in-out infinite, icon-pulse 2s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 15px var(--glow-secondary));
+    }
+
+    @keyframes float-icon {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-15px) rotate(2deg); }
+      50% { transform: translateY(-5px) rotate(-1deg); }
+      75% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    @keyframes icon-pulse {
+      0% { filter: drop-shadow(0 0 15px var(--glow-secondary)); }
+      100% { filter: drop-shadow(0 0 25px var(--glow-primary)); }
+    }
+
+    /* Enhanced buttons */
+    .btn-robot {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 50%, var(--accent-cyan) 100%);
+      border: none;
+      color: white;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 14px 28px;
+      border-radius: 50px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px var(--glow-primary);
+    }
+
+    .btn-robot::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.6s ease;
+    }
+
+    .btn-robot::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+    }
+
+    .btn-robot:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px var(--glow-secondary);
+      color: white;
+    }
+
+    .btn-robot:hover::before {
+      left: 100%;
+    }
+
+    .btn-robot:hover::after {
+      opacity: 1;
+    }
+
+    .btn-robot:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    .btn-robot-outline {
+      background: transparent;
+      border: 2px solid transparent;
+      background-image: linear-gradient(var(--card-bg), var(--card-bg)), 
+                        linear-gradient(135deg, var(--accent-cyan), var(--primary-blue), var(--primary-purple));
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      color: white;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 12px 26px;
+      border-radius: 50px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-robot-outline::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      border-radius: 50px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      z-index: -1;
+    }
+
+    .btn-robot-outline:hover {
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--glow-secondary);
+    }
+
+    .btn-robot-outline:hover::before {
+      opacity: 1;
+    }
+
+    /* Enhanced order cards */
+    .order-card {
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.9) 0%, 
+        rgba(37, 37, 70, 0.7) 50%, 
+        rgba(26, 26, 46, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 28px;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .order-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        var(--accent-cyan) 0%, 
+        var(--primary-blue) 25%, 
+        var(--primary-purple) 50%, 
+        var(--accent-pink) 75%, 
+        var(--accent-cyan) 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .order-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, 
+        rgba(0, 230, 255, 0.05) 0%, 
+        transparent 50%, 
+        rgba(106, 90, 205, 0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .order-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.4),
+        0 0 30px var(--glow-secondary),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(0, 230, 255, 0.3);
+    }
+
+    .order-card:hover::before {
+      opacity: 1;
+    }
+
+    .order-card:hover::after {
+      opacity: 1;
+    }
+
+    /* Enhanced status badges */
+    .status-badge {
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .status-processing {
+      background: linear-gradient(135deg, var(--warning-yellow) 0%, #ffdd00 100%);
+      color: var(--darker-bg);
+      animation: status-pulse 2s ease-in-out infinite;
+    }
+
+    .status-completed {
+      background: linear-gradient(135deg, var(--success-green) 0%, #00cc66 100%);
+      animation: status-glow 3s ease-in-out infinite alternate;
+    }
+
+    .status-cancelled {
+      background: linear-gradient(135deg, var(--danger-red) 0%, #ff6b6b 100%);
+      animation: status-pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes status-pulse {
+      0%, 100% { 
+        box-shadow: 0 4px 15px rgba(255, 204, 0, 0.4);
+        transform: scale(1);
+      }
+      50% { 
+        box-shadow: 0 6px 25px rgba(255, 204, 0, 0.7);
+        transform: scale(1.05);
+      }
+    }
+
+    @keyframes status-glow {
+      0% { box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3); }
+      100% { box-shadow: 0 6px 20px rgba(0, 255, 136, 0.5); }
+    }
+
+    /* Enhanced product items */
+    .product-item {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: rgba(30, 30, 60, 0.5);
+      border-radius: 12px;
+      margin-bottom: 10px;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .product-item:hover {
+      background: rgba(40, 40, 80, 0.7);
+      transform: translateX(5px);
+      border-left: 3px solid var(--accent-cyan);
+    }
+
+    .product-image {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 15px;
+      border: 1px solid rgba(0, 230, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .product-item:hover .product-image {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 230, 255, 0.2);
+      border-color: var(--accent-cyan);
+    }
+
+    /* Enhanced alerts */
+    .alert-robot {
+      background: linear-gradient(135deg, 
+        rgba(0, 230, 255, 0.1) 0%, 
+        rgba(0, 102, 255, 0.05) 50%, 
+        rgba(106, 90, 205, 0.1) 100%);
+      backdrop-filter: blur(15px);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 16px;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0, 230, 255, 0.1);
+    }
+
+    .alert-robot::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 230, 255, 0.2), transparent);
+      animation: scan-alert 4s ease-in-out infinite;
+    }
+
+    @keyframes scan-alert {
+      0% { left: -100%; }
+      50% { left: 100%; }
+      100% { left: 100%; }
+    }
+
+    /* Enhanced modal styling */
+    .modal-content {
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.95) 0%, 
+        rgba(15, 15, 35, 0.95) 100%);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(0, 230, 255, 0.2);
+      border-radius: 24px;
+      color: white;
+      box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(0, 230, 255, 0.1);
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, 
+        rgba(0, 102, 255, 0.2) 0%, 
+        rgba(106, 90, 205, 0.2) 100%);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 230, 255, 0.2);
+      border-radius: 24px 24px 0 0;
+      padding: 24px;
+    }
+
+    .modal-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .btn-close {
+      filter: invert(1) brightness(1.5);
+      transition: all 0.3s ease;
+    }
+
+    .btn-close:hover {
+      transform: scale(1.1) rotate(90deg);
+      filter: invert(1) brightness(2);
+    }
+
+    /* Enhanced form controls */
+    .form-control {
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(0, 230, 255, 0.2);
+      border-radius: 12px;
+      color: white;
+      font-family: 'Exo 2', sans-serif;
+      padding: 12px 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      background: rgba(26, 26, 46, 0.9);
+      border-color: var(--accent-cyan);
+      color: white;
+      box-shadow: 0 0 20px rgba(0, 230, 255, 0.2);
+      transform: scale(1.02);
+    }
+
+    .form-label {
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    /* Enhanced scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--darker-bg);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+      border-radius: 10px;
+      border: 2px solid var(--darker-bg);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-pink) 100%);
+    }
+
+    /* Enhanced loading spinner */
+    .loading-spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--accent-cyan);
+      animation: advanced-spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+    }
+
+    @keyframes advanced-spin {
+      0% { transform: rotate(0deg) scale(1); }
+      50% { transform: rotate(180deg) scale(1.1); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    /* Floating action button */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(0, 230, 255, 0.3);
+      z-index: 1000;
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(180deg);
+      box-shadow: 0 15px 40px rgba(0, 230, 255, 0.5);
+    }
+
+    /* Enhanced no orders state */
+    .no-orders {
+      text-align: center;
+      padding: 5rem 2rem;
+      color: white;
+    }
+
+    .no-orders .robot-icon {
+      font-size: 5rem;
+      margin-bottom: 2rem;
+      opacity: 0.3;
+      animation: no-orders-float 6s ease-in-out infinite;
+    }
+
+    @keyframes no-orders-float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      33% { transform: translateY(-20px) rotate(5deg); }
+      66% { transform: translateY(-10px) rotate(-3deg); }
+    }
+
+    /* Order details section */
+    .order-details {
+      background: rgba(20, 20, 40, 0.6);
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 4px solid var(--primary-purple);
+    }
+
+    .order-details-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      color: var(--accent-cyan);
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .order-details-title i {
+      margin-right: 10px;
+    }
+
+    /* Responsive enhancements */
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 2.2rem;
+      }
+      
+      .robot-icon {
+        font-size: 3rem;
+      }
+      
+      .order-card {
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 16px;
+      }
+
+      .btn-robot, .btn-robot-outline {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+      }
+
+      .fab {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 1.2rem;
+      }
+
+      .product-image {
+        width: 50px;
+        height: 50px;
+      }
+    }
+
+    /* Micro-interactions */
+    .interactive-element {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .interactive-element:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Enhanced text effects */
+    .glow-text {
+      text-shadow: 0 0 10px currentColor;
+      animation: text-glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes text-glow {
+      0% { text-shadow: 0 0 10px currentColor; }
+      100% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+    }
+
+    /* Parallax effect for cards */
+    .parallax-card {
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease;
+    }
+
+    .parallax-card:hover {
+      transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+    }
+
+    /* Enhanced focus states for accessibility */
+    .btn-robot:focus,
+    .btn-robot-outline:focus,
+    .form-control:focus {
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 2px;
+    }
+
+    /* Timeline for order status */
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+      margin: 20px 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, 
+        var(--primary-purple), 
+        var(--accent-cyan), 
+        var(--success-green));
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+      padding-left: 20px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 5px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-cyan);
+      border: 2px solid var(--primary-purple);
+    }
+
+    .timeline-item.completed::before {
+      background: var(--success-green);
+      border-color: var(--success-green);
+    }
+
+    .timeline-item.active::before {
+      animation: timeline-pulse 2s infinite;
+      box-shadow: 0 0 0 5px rgba(0, 230, 255, 0.3);
+    }
+
+    @keyframes timeline-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0, 230, 255, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(0, 230, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(0, 230, 255, 0); }
+    }
+
+    /* Price highlight */
+    .price-highlight {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Custom cursor effect */
+    #custom-cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 10000;
+      opacity: 0.3;
+      transition: transform 0.1s ease;
+    }
   </style>
 </head>
 <body>
+  <div id="header"></div>
 
-    <div id="header"></div>
+  <!-- Enhanced header section -->
+  <div class="page-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="page-title mb-2">
+            <i class="fas fa-robot robot-icon me-3"></i>
+            Romeros Orders
+          </h1>
+        </div>
+        <div class="col-md-4 text-md-end">
+          <a href="/h.html" class="btn btn-robot interactive-element">
+            <i class="fas fa-shopping-cart me-2"></i>Shop Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 
+  <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="glow-text">
+        <i class="fas fa-box-open text-primary me-2"></i>Order History
+      </h2>
+    </div>
+    
+    <div class="alert alert-robot mb-4">
+      <i class="fas fa-info-circle me-2"></i>
+      <strong>System Status:</strong> Your order history is secured with quantum encryption. Click on any order for detailed analysis.
+    </div>
+    
+    <div id="ordersList"></div>
+    
+    <!-- Enhanced no orders state -->
+    <div class="no-orders d-none" id="noOrdersState">
+      <i class="fas fa-robot robot-icon"></i>
+      <h3 class="mb-3">No Orders Found</h3>
+      <p class="lead mb-4">Your order database is currently empty. Begin your shopping journey now!</p>
+      <a href="/home.html" class="btn btn-robot">
+        <i class="fas fa-shopping-cart me-2"></i>Explore Products
+      </a>
+    </div>
+  </div>
 
-<div class="container mt-4">
-  <h2 class="mb-4"> My Orders</h2>
-  <div id="ordersList"></div>
-</div>
+  <!-- Floating action button for quick actions -->
+  <button class="fab" id="quickActionsBtn" title="Quick Actions">
+    <i class="fas fa-bolt"></i>
+  </button>
+
+  <!-- Order Details Modal -->
+  <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content glass-card">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderDetailsModalLabel">
+            <i class="fas fa-search me-2"></i>Order Analysis
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row">
+            <div class="col-md-6">
+              <h5 class="mb-3"><i class="fas fa-box me-2"></i>Order Summary</h5>
+              <div class="order-details">
+                <p><strong>Order ID:</strong> <span id="modalOrderId">Loading...</span></p>
+                <p><strong>Date:</strong> <span id="modalOrderDate">Loading...</span></p>
+                <p><strong>Status:</strong> <span id="modalOrderStatus" class="status-badge">Loading...</span></p>
+                <p><strong>Total:</strong> <span id="modalOrderTotal" class="price-highlight">$0.00</span></p>
+              </div>
+              
+              <h5 class="mt-4 mb-3"><i class="fas fa-truck me-2"></i>Shipping Info</h5>
+              <div class="order-details">
+                <p id="modalShippingAddress">Loading shipping information...</p>
+                <p id="modalTrackingNumber"><strong>Tracking:</strong> Not available</p>
+              </div>
+            </div>
+            
+            <div class="col-md-6">
+              <h5 class="mb-3"><i class="fas fa-list-alt me-2"></i>Order Timeline</h5>
+              <div class="order-details">
+                <div class="timeline">
+                  <div class="timeline-item completed">
+                    <strong>Order Placed</strong>
+                    <p class="small text-muted mb-0">Today at 14:30</p>
+                  </div>
+                  <div class="timeline-item active">
+                    <strong>Processing</strong>
+                    <p class="small text-muted mb-0">Estimated completion: Tomorrow</p>
+                  </div>
+                  <div class="timeline-item">
+                    <strong>Shipped</strong>
+                    <p class="small text-muted mb-0">Not yet shipped</p>
+                  </div>
+                  <div class="timeline-item">
+                    <strong>Delivered</strong>
+                    <p class="small text-muted mb-0">Awaiting shipment</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <h5 class="mt-4 mb-3"><i class="fas fa-shopping-bag me-2"></i>Products</h5>
+          <div id="modalOrderProducts" class="order-details">
+            <!-- Products will be inserted here by JavaScript -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-robot-outline" data-bs-dismiss="modal">
+            <i class="fas fa-times me-2"></i>Close
+          </button>
+          <button type="button" class="btn btn-robot">
+            <i class="fas fa-print me-2"></i>Print Invoice
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/myorders.js"></script>
+  <script>
+    // Enhanced JavaScript with modern effects
+    $(document).ready(function() {
+      // Create custom cursor
+      $('<div id="custom-cursor">').appendTo('body');
+      
+      // Track mouse movement for custom cursor
+      $(document).mousemove(function(e) {
+        $('#custom-cursor').css({
+          left: e.clientX - 10,
+          top: e.clientY - 10
+        });
+      });
+      
+      // Add hover effects for interactive elements
+      $('.interactive-element').hover(
+        function() {
+          $(this).addClass('animate__animated animate__pulse');
+        },
+        function() {
+          $(this).removeClass('animate__animated animate__pulse');
+        }
+      );
+      
+      // Floating action button functionality
+      $('#quickActionsBtn').click(function() {
+        $(this).addClass('animate__animated animate__pulse');
+        setTimeout(() => {
+          $(this).removeClass('animate__animated animate__pulse');
+        }, 600);
+        
+        Swal.fire({
+          title: 'Quick Actions',
+          html: `
+            <div class="d-grid gap-2">
+              <button class="btn btn-robot" onclick="window.location.href='/products.html'">
+                <i class="fas fa-shopping-cart me-2"></i>Browse Products
+              </button>
+              <button class="btn btn-robot-outline" onclick="scrollToTop()">
+                <i class="fas fa-arrow-up me-2"></i>Scroll to Top
+              </button>
+              <button class="btn btn-robot-outline" onclick="window.location.href='/myreviews.html'">
+                <i class="fas fa-star me-2"></i>My Reviews
+              </button>
+            </div>
+          `,
+          showConfirmButton: false,
+          background: 'rgba(26, 26, 46, 0.95)',
+          color: '#ffffff',
+          customClass: {
+            popup: 'glass-card'
+          }
+        });
+      });
+      
+      // Sample order data - in a real app, this would come from an API
+      const sampleOrders = [
+        {
+          id: 'ORD-2023-001',
+          date: '2023-11-15',
+          status: 'completed',
+          total: 149.99,
+          products: [
+            { name: 'Quantum Processor X9', price: 99.99, quantity: 1, image: 'https://via.placeholder.com/60' },
+            { name: 'Neural Cooling Paste', price: 25.00, quantity: 2, image: 'https://via.placeholder.com/60' }
+          ]
+        },
+        {
+          id: 'ORD-2023-002',
+          date: '2023-11-10',
+          status: 'processing',
+          total: 299.95,
+          products: [
+            { name: 'Holographic Display Pro', price: 249.95, quantity: 1, image: 'https://via.placeholder.com/60' },
+            { name: 'Display Mount', price: 25.00, quantity: 2, image: 'https://via.placeholder.com/60' }
+          ]
+        },
+        {
+          id: 'ORD-2023-003',
+          date: '2023-11-05',
+          status: 'cancelled',
+          total: 79.99,
+          products: [
+            { name: 'Wireless Charging Pad', price: 39.99, quantity: 2, image: 'https://via.placeholder.com/60' }
+          ]
+        }
+      ];
+      
+      // Render orders
+      function renderOrders(orders) {
+        const ordersList = $('#ordersList');
+        
+        if (orders.length === 0) {
+          $('#noOrdersState').removeClass('d-none');
+          return;
+        }
+        
+        ordersList.empty();
+        
+        orders.forEach(order => {
+          const orderCard = $(`
+            <div class="order-card parallax-card" data-order-id="${order.id}">
+              <div class="d-flex justify-content-between align-items-start">
+                <div>
+                  <h4 class="mb-2">Order #${order.id}</h4>
+                  <p class="text-muted mb-3"><i class="far fa-calendar-alt me-2"></i>${new Date(order.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                  <span class="status-badge status-${order.status}">
+                    ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                  </span>
+                </div>
+                <div class="text-end">
+                  <h3 class="price-highlight">$${order.total.toFixed(2)}</h3>
+                  <button class="btn btn-robot-outline btn-sm mt-2 view-details-btn">
+                    <i class="fas fa-search me-1"></i> Details
+                  </button>
+                </div>
+              </div>
+              
+              <div class="mt-3">
+                ${order.products.map(product => `
+                  <div class="product-item">
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1">${product.name}</h6>
+                      <p class="mb-0 text-muted">${product.quantity} × $${product.price.toFixed(2)}</p>
+                    </div>
+                    <div class="text-end">
+                      <p class="mb-0">$${(product.price * product.quantity).toFixed(2)}</p>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `);
+          
+          ordersList.append(orderCard);
+        });
+        
+        // Add click handler for view details buttons
+        $('.view-details-btn').click(function() {
+          const orderId = $(this).closest('.order-card').data('order-id');
+          const order = sampleOrders.find(o => o.id === orderId);
+          
+          if (order) {
+            $('#modalOrderId').text(order.id);
+            $('#modalOrderDate').text(new Date(order.date).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            }));
+            
+            // Update status badge
+            const statusBadge = $('#modalOrderStatus');
+            statusBadge.removeClass('status-processing status-completed status-cancelled');
+            statusBadge.addClass(`status-${order.status}`);
+            statusBadge.text(order.status.charAt(0).toUpperCase() + order.status.slice(1));
+            
+            $('#modalOrderTotal').text(`$${order.total.toFixed(2)}`);
+            
+            // Update products list
+            const productsContainer = $('#modalOrderProducts');
+            productsContainer.empty();
+            
+            order.products.forEach(product => {
+              productsContainer.append(`
+                <div class="product-item">
+                  <img src="${product.image}" alt="${product.name}" class="product-image">
+                  <div class="flex-grow-1">
+                    <h6 class="mb-1">${product.name}</h6>
+                    <p class="mb-0 text-muted">${product.quantity} × $${product.price.toFixed(2)}</p>
+                  </div>
+                  <div class="text-end">
+                    <p class="mb-0">$${(product.price * product.quantity).toFixed(2)}</p>
+                  </div>
+                </div>
+              `);
+            });
+            
+            $('#orderDetailsModal').modal('show');
+          }
+        });
+      }
+      
+      // Initial render
+      renderOrders(sampleOrders);
+      
+      // Filter toggle functionality
+      $('#toggleCompletedBtn').click(function() {
+        $(this).find('i').toggleClass('fa-filter fa-check-circle');
+        $(this).find('span').text($(this).find('span').text() === 'Filter Orders' ? 'Show All' : 'Filter Orders');
+        
+        // In a real app, this would filter the orders list
+        Swal.fire({
+          title: 'Filter Applied',
+          text: 'Now showing only completed orders',
+          icon: 'success',
+          background: 'rgba(26, 26, 46, 0.95)',
+          color: '#ffffff',
+          confirmButtonClass: 'btn btn-robot'
+        });
+      });
+    });
+    
+    // Global function for scrolling to top
+    window.scrollToTop = function() {
+      $('html, body').animate({scrollTop: 0}, 800);
+    };
+  </script>
 </body>
 </html>
