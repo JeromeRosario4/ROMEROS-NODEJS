@@ -106,6 +106,18 @@ $(document).ready(async function () {
 
             console.log('Orders response:', ordersRes);
 
+            // Get customer reviews
+            const reviewsRes = await $.ajax({
+                url: `${API_BASE_URL}/api/reviews/customer/${customerId}`,
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            console.log('Reviews response:', reviewsRes);
+            const customerReviews = reviewsRes.success ? reviewsRes.data : [];
+
             if (!ordersRes.success) {
                 $('#ordersList').html(`<p class="text-danger">⚠️ Failed to load orders: ${ordersRes.message || 'Unknown error'}</p>`);
                 return;
@@ -159,23 +171,36 @@ $(document).ready(async function () {
                             <div class="order-items">
                                 <strong>Items:</strong>
                                 <div class="mt-2">
-                                    ${items.map(item => `
+                                    ${items.map(item => {
+                                        // Check if this item has already been reviewed by the customer
+                                        const alreadyReviewed = customerReviews.some(
+                                            review => review.item_id === item.item_id && 
+                                                      review.orderinfo_id === order.orderinfo_id
+                                        );
+                                        
+                                        return `
                                         <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
                                             <div class="flex-grow-1">
                                                 <span class="fw-medium">${item.item_name || 'Unknown Item'}</span>
                                                 <small class="text-muted d-block">Qty: ${item.quantity || 0}</small>
                                                 ${order.status === 'Delivered' ? `
-                                                    <button class="btn btn-sm btn-outline-primary mt-1 create-review-btn" 
-                                                            data-item-id="${item.item_id}"
-                                                            data-order-id="${order.orderinfo_id}"
-                                                            data-item-name="${escapeHtml(item.item_name || 'Unknown Item')}">
-                                                        <i class="fas fa-star me-1"></i> Create Review
-                                                    </button>
+                                                    ${alreadyReviewed ? `
+                                                        <button class="btn btn-sm btn-outline-secondary mt-1" disabled>
+                                                            <i class="fas fa-check me-1"></i> Already Reviewed
+                                                        </button>
+                                                    ` : `
+                                                        <button class="btn btn-sm btn-outline-primary mt-1 create-review-btn" 
+                                                                data-item-id="${item.item_id}"
+                                                                data-order-id="${order.orderinfo_id}"
+                                                                data-item-name="${escapeHtml(item.item_name || 'Unknown Item')}">
+                                                            <i class="fas fa-star me-1"></i> Create Review
+                                                        </button>
+                                                    `}
                                                 ` : ''}
                                             </div>
                                             <span class="fw-bold">₱${((parseFloat(item.quantity) || 0) * (parseFloat(item.price) || 0)).toFixed(2)}</span>
                                         </div>
-                                    `).join('')}
+                                    `}).join('')}
                                 </div>
                             </div>
                         ` : '<p class="text-muted">No items found for this order.</p>'}
