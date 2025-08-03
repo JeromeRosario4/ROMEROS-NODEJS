@@ -9,188 +9,405 @@
 
   <!-- Bootstrap CSS & JS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <!-- Your custom CSS -->
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;500;600;700;800;900&family=Exo+2:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --primary-blue: #0066ff;
+      --secondary-blue: #3399ff;
+      --primary-purple: #6a5acd;
+      --secondary-purple: #9370db;
+      --accent-cyan: #00e6ff;
+      --accent-pink: #ff6b9d;
+      --dark-bg: #0a0a0f;
+      --darker-bg: #05050a;
+      --card-bg: #1a1a2e;
+      --card-hover: #252546;
+      --text-primary: #ffffff;
+      --text-secondary: #ffffff;
+      --success-green: #00ff88;
+      --warning-yellow: #ffcc00;
+      --danger-red: #ff4757;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glow-primary: rgba(0, 102, 255, 0.4);
+      --glow-secondary: rgba(0, 230, 255, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      color: white;
+    }
+
     body {
-  font-family: Arial, sans-serif;
-  background: #f4f4f4;
-  margin: 0;
-  padding: 0;
-  padding-top: 70px;
-  overflow-x: hidden;
-  min-height: 100vh;
-}
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 102, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(106, 90, 205, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 90%, rgba(0, 230, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+      font-family: 'Exo 2', sans-serif;
+      color: white;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      padding-top: 60px;
+    }
 
-.main-container {
-  width: 100%;
-  max-width: 600px;
-  margin: 20px auto;
-  background: #fff;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  box-sizing: border-box;
-}
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(90deg, transparent 24%, rgba(0, 102, 255, 0.03) 25%, rgba(0, 102, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(106, 90, 205, 0.03) 75%, rgba(106, 90, 205, 0.03) 76%, transparent 77%),
+        linear-gradient(transparent 24%, rgba(0, 230, 255, 0.02) 25%, rgba(0, 230, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 107, 157, 0.02) 75%, rgba(255, 107, 157, 0.02) 76%, transparent 77%);
+      background-size: 60px 60px, 80px 80px;
+      z-index: -1;
+      animation: grid-drift 25s linear infinite;
+    }
 
-@media (max-width: 768px) {
-  .main-container {
-    margin: 20px 15px;
-    padding: 20px;
-  }
-}
+    @keyframes grid-drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(60px, 60px); }
+    }
 
-h2 {
-  text-align: center;
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #333;
-}
+    .main-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.9) 0%, 
+        rgba(37, 37, 70, 0.7) 50%, 
+        rgba(26, 26, 46, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.4),
+        0 0 30px var(--glow-secondary),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
 
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
+    .main-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        var(--accent-cyan) 0%, 
+        var(--primary-blue) 25%, 
+        var(--primary-purple) 50%, 
+        var(--accent-pink) 75%, 
+        var(--accent-cyan) 100%);
+      border-radius: 24px 24px 0 0;
+    }
 
-.form-row {
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-}
+    @media (max-width: 768px) {
+      .main-container {
+        margin: 20px 15px;
+        padding: 30px 20px;
+      }
+    }
 
-.form-row input,
-.form-row select {
-  flex: 1;
-  min-width: 200px;
-}
+    h2 {
+      text-align: center;
+      margin-top: 0;
+      margin-bottom: 30px;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 2.2rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-blue), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(0, 230, 255, 0.3);
+      animation: title-glow 3s ease-in-out infinite alternate;
+    }
 
-@media (max-width: 480px) {
-  .form-row {
-    flex-direction: column;
-  }
+    @keyframes title-glow {
+      0% { filter: drop-shadow(0 0 10px rgba(0, 230, 255, 0.3)); }
+      100% { filter: drop-shadow(0 0 20px rgba(106, 90, 205, 0.5)); }
+    }
 
-  .form-row input,
-  .form-row select {
-    min-width: auto;
-  }
-}
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-input,
-select {
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 16px;
-  width: 100%;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
+    .form-row {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
 
-input:focus,
-select:focus {
-  outline: none;
-  border-color: #ff4500;
-  box-shadow: 0 0 5px rgba(255, 69, 0, 0.3);
-}
+    .form-row input,
+    .form-row select {
+      flex: 1;
+      min-width: 200px;
+    }
 
-button {
-  padding: 12px 20px;
-  border: 1px solid #ff4500;
-  border-radius: 6px;
-  font-size: 16px;
-  background-color: #ff4500;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 10px;
-}
+    @media (max-width: 480px) {
+      .form-row {
+        flex-direction: column;
+      }
+      .form-row input,
+      .form-row select {
+        min-width: auto;
+      }
+    }
 
-button:hover {
-  background-color: #e03e00;
-}
+    input,
+    select {
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(0, 230, 255, 0.2);
+      border-radius: 12px;
+      color: white;
+      font-family: 'Exo 2', sans-serif;
+      padding: 15px 18px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
 
-button:active {
-  transform: translateY(1px);
-}
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
 
-#profileImagePreview {
-  display: block;
-  margin: 20px auto;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #ddd;
-  transition: border-color 0.3s ease;
-}
+    input:focus,
+    select:focus {
+      outline: none;
+      background: rgba(26, 26, 46, 0.9);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 230, 255, 0.2);
+      transform: scale(1.02);
+    }
 
-#profileImagePreview:hover {
-  border-color: #ff4500;
-}
+    select {
+      background-image: linear-gradient(45deg, transparent 50%, var(--accent-cyan) 50%),
+                        linear-gradient(135deg, var(--accent-cyan) 50%, transparent 50%);
+      background-position: calc(100% - 20px) calc(1em + 2px),
+                           calc(100% - 15px) calc(1em + 2px);
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
 
-#profileMsg {
-  text-align: center;
-  margin-top: 15px;
-  padding: 10px;
-  border-radius: 5px;
-  font-weight: 500;
-}
+    select option {
+      background: var(--card-bg);
+      color: white;
+    }
 
-#profileMsg.success {
-  background-color: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
+    button {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 50%, var(--accent-cyan) 100%);
+      border: none;
+      color: white;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      padding: 18px 32px;
+      border-radius: 50px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 25px var(--glow-primary);
+      margin-top: 15px;
+    }
 
-#profileMsg.error {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-}
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.6s ease;
+    }
 
-input[type="file"] {
-  padding: 8px;
-  border: 2px dashed #ccc;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  transition: border-color 0.3s ease;
-}
+    button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 15px 40px var(--glow-secondary);
+    }
 
-input[type="file"]:hover {
-  border-color: #ff4500;
-  background-color: #fff;
-}
+    button:hover::before {
+      left: 100%;
+    }
 
-input:invalid {
-  border-color: #dc3545;
-}
+    button:active {
+      transform: translateY(-1px) scale(0.98);
+    }
 
-input:valid {
-  border-color: #28a745;
-}
+    button:disabled {
+      background: linear-gradient(135deg, #6c757d, #5a6268);
+      cursor: not-allowed;
+      opacity: 0.6;
+      transform: none;
+      box-shadow: none;
+    }
 
-button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
+    #profileImagePreview {
+      display: block;
+      margin: 20px auto;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--accent-cyan);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 30px rgba(0, 230, 255, 0.3);
+      animation: profile-glow 4s ease-in-out infinite alternate;
+    }
 
-* {
-  transition: all 0.2s ease;
-}
-</style>
+    @keyframes profile-glow {
+      0% { 
+        box-shadow: 0 0 30px rgba(0, 230, 255, 0.3);
+        border-color: var(--accent-cyan);
+      }
+      100% { 
+        box-shadow: 0 0 40px rgba(106, 90, 205, 0.5);
+        border-color: var(--primary-purple);
+      }
+    }
+
+    #profileImagePreview:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 50px rgba(0, 230, 255, 0.6);
+    }
+
+    #profileMsg {
+      text-align: center;
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s ease;
+    }
+
+    #profileMsg.success {
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 204, 102, 0.1));
+      color: var(--success-green);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+    }
+
+    #profileMsg.error {
+      background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(255, 107, 107, 0.1));
+      color: var(--danger-red);
+      border: 1px solid rgba(255, 71, 87, 0.3);
+      box-shadow: 0 0 20px rgba(255, 71, 87, 0.1);
+    }
+
+    input[type="file"] {
+      background: rgba(26, 26, 46, 0.6);
+      border: 2px dashed rgba(0, 230, 255, 0.3);
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    input[type="file"]:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(26, 26, 46, 0.8);
+      box-shadow: 0 0 15px rgba(0, 230, 255, 0.2);
+    }
+
+    input[type="file"]::file-selector-button {
+      background: linear-gradient(135deg, var(--primary-purple), var(--accent-cyan));
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 10px;
+      transition: all 0.3s ease;
+    }
+
+    input[type="file"]::file-selector-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0, 230, 255, 0.3);
+    }
+
+    /* Enhanced scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--darker-bg);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+      border-radius: 10px;
+      border: 2px solid var(--darker-bg);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-pink) 100%);
+    }
+
+    /* Home button styles */
+    .home-button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, var(--primary-purple), var(--accent-cyan));
+      border: none;
+      color: white;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 100;
+      box-shadow: 0 0 15px rgba(106, 90, 205, 0.5);
+    }
+
+    .home-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(0, 230, 255, 0.6);
+    }
+
+    .home-button:active {
+      transform: translateY(0);
+    }
+
+  </style>
 </head>
 <body>
- <div id="header"></div>
+  <!-- Home Button -->
+  <button class="home-button" onclick="window.location.href='home.html'">Home</button>
 
   <!-- Page Content -->
-  <div class="container form mt-5 pt-5">
+  <div class="main-container">
     <h2>Complete Your Profile</h2>
-    <img id="profileImagePreview" src="https://via.placeholder.com/120" alt="Profile Picture" />
+    <img id="profileImagePreview" src="https://via.placeholder.com/140" alt="Profile Picture" />
 
     <form id="profileForm" enctype="multipart/form-data">
-      <select name="title" id="title" class="form-select mb-3">
+      <select name="title" id="title">
         <option value="">Select Title</option>
         <option value="Mr.">Mr.</option>
         <option value="Ms.">Ms.</option>
@@ -199,25 +416,25 @@ button:disabled {
 
       <input type="hidden" name="userId" id="userId" />
 
-      <div class="form-row mb-3">
-        <input type="text" name="fname" id="fname" placeholder="First Name" class="form-control mb-2" required />
-        <input type="text" name="lname" id="lname" placeholder="Last Name" class="form-control" required />
+      <div class="form-row">
+        <input type="text" name="fname" id="fname" placeholder="First Name" required />
+        <input type="text" name="lname" id="lname" placeholder="Last Name" required />
       </div>
 
-      <div class="form-row mb-3">
-        <input type="text" name="addressline" id="addressline" placeholder="Address" class="form-control mb-2" />
-        <input type="text" name="town" id="town" placeholder="Town" class="form-control" />
+      <div class="form-row">
+        <input type="text" name="addressline" id="addressline" placeholder="Address" />
+        <input type="text" name="town" id="town" placeholder="Town" />
       </div>
 
-      <div class="form-row mb-3">
-        <input type="text" name="phone" id="phone" placeholder="Phone" class="form-control mb-2" />
-        <input type="file" name="image" id="image" accept="image/*" class="form-control" />
+      <div class="form-row">
+        <input type="text" name="phone" id="phone" placeholder="Phone" />
+        <input type="file" name="image" id="image" accept="image/*" />
       </div>
 
-      <button type="submit" class="btn btn-primary">Save Profile</button>
+      <button type="submit">Save Profile</button>
     </form>
     
-    <p id="profileMsg" class="mt-3"></p>
+    <div id="profileMsg"></div>
   </div>
 
   <script>
@@ -230,34 +447,6 @@ button:disabled {
         window.location.href = '/login.html';
         return;
       }
-
-      // Force-load header
-      $('#header').load('/header.html', function (response, status, xhr) {
-        if (status == "error") {
-          console.error("Failed to load header:", xhr.status, xhr.statusText);
-        } else {
-          // FIX: Enable dropdown
-          document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function (el) {
-            new bootstrap.Dropdown(el);
-          });
-
-          // Adjust header links
-          $('#login-link, #register-link').addClass('d-none');
-          $('#user-dropdown').removeClass('d-none');
-
-          // Set user data in header
-          $.get(`/api/users/customers/${userId}`, function (res) {
-            if (res.success && res.data) {
-              const data = res.data;
-              const fullName = `${data.fname || ''} ${data.lname || ''}`.trim();
-              $('#username').text(fullName || 'USER');
-              if (data.image_path) {
-                $('.profile-img').attr('src', `/${data.image_path}`);
-              }
-            }
-          });
-        }
-      });
 
       $('#userId').val(userId);
 
@@ -299,6 +488,11 @@ button:disabled {
         const formData = new FormData(this);
         formData.set('userId', userId);
 
+        // Show loading state
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalText = submitBtn.text();
+        submitBtn.text('Saving...').prop('disabled', true);
+
         $.ajax({
           url: '/api/users/update-profile',
           method: 'POST',
@@ -306,12 +500,15 @@ button:disabled {
           contentType: false,
           processData: false,
           success: function () {
-            $('#profileMsg').text(' Profile saved!').css('color', 'green');
+            $('#profileMsg').text('✓ Profile saved successfully!').removeClass('error').addClass('success');
             fetchProfileData(userId);
           },
           error: function (err) {
-            $('#profileMsg').text(' Failed to save.').css('color', 'red');
+            $('#profileMsg').text('✗ Failed to save profile.').removeClass('success').addClass('error');
             console.error(err);
+          },
+          complete: function() {
+            submitBtn.text(originalText).prop('disabled', false);
           }
         });
       });

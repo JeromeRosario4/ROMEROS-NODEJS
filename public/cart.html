@@ -3,23 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Cart</title>
+  <title>Shopping Cart</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.16.1/sweetalert2.min.js"
+    integrity="sha512-LGHBR+kJ5jZSIzhhdfytPoEHzgaYuTRifq9g5l6ja6/k9NAOsAi5dQh4zQF6JIRB8cAYxTRedERUF+97/KuivQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;500;600;700;800;900&family=Exo+2:wght@200;300;400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+    
+    :root {
+      --primary-blue: #0066ff;
+      --secondary-blue: #3399ff;
+      --primary-purple: #6a5acd;
+      --secondary-purple: #9370db;
+      --accent-cyan: #00e6ff;
+      --accent-pink: #ff6b9d;
+      --dark-bg: #0a0a0f;
+      --darker-bg: #05050a;
+      --card-bg: #1a1a2e;
+      --card-hover: #252546;
+      --text-primary: #ffffff;
+      --text-secondary: #ffffff;
+      --success-green: #00ff88;
+      --warning-yellow: #ffcc00;
+      --danger-red: #ff4757;
+      --glass-bg: rgba(255, 255, 255, 0.05);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glow-primary: rgba(0, 102, 255, 0.4);
+      --glow-secondary: rgba(0, 230, 255, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      color: white;
+    }
+
     body {
-      background: linear-gradient(135deg, #0f0d2a 0%, #1e1b4b 50%, #312e81 100%);
+      background: 
+        radial-gradient(circle at 20% 20%, rgba(0, 102, 255, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(106, 90, 205, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 90%, rgba(0, 230, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(135deg, var(--dark-bg) 0%, var(--darker-bg) 100%);
+      font-family: 'Exo 2', sans-serif;
+      color: white;
       min-height: 100vh;
-      font-family: 'Orbitron', 'Courier New', monospace;
-      color: #e0e7ff;
-    }
-
-    .container {
       position: relative;
+      overflow-x: hidden;
     }
 
-    .container::before {
+    /* Enhanced animated background */
+    body::before {
       content: '';
       position: fixed;
       top: 0;
@@ -27,20 +62,138 @@
       width: 100%;
       height: 100%;
       background: 
-        radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 20%, rgba(147, 51, 234, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 40% 40%, rgba(99, 102, 241, 0.05) 0%, transparent 50%);
-      pointer-events: none;
+        linear-gradient(90deg, transparent 24%, rgba(0, 102, 255, 0.03) 25%, rgba(0, 102, 255, 0.03) 26%, transparent 27%, transparent 74%, rgba(106, 90, 205, 0.03) 75%, rgba(106, 90, 205, 0.03) 76%, transparent 77%),
+        linear-gradient(transparent 24%, rgba(0, 230, 255, 0.02) 25%, rgba(0, 230, 255, 0.02) 26%, transparent 27%, transparent 74%, rgba(255, 107, 157, 0.02) 75%, rgba(255, 107, 157, 0.02) 76%, transparent 77%);
+      background-size: 60px 60px, 80px 80px;
       z-index: -1;
+      animation: grid-drift 25s linear infinite, pulse-grid 8s ease-in-out infinite alternate;
     }
 
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 15% 15%, var(--accent-cyan) 0%, transparent 25%),
+        radial-gradient(circle at 85% 85%, var(--primary-purple) 0%, transparent 25%),
+        radial-gradient(circle at 50% 20%, var(--accent-pink) 0%, transparent 20%);
+      opacity: 0.03;
+      z-index: -1;
+      animation: float-orbs 12s ease-in-out infinite;
+    }
+
+    @keyframes grid-drift {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(60px, 60px); }
+    }
+
+    @keyframes pulse-grid {
+      0% { opacity: 0.3; }
+      100% { opacity: 0.6; }
+    }
+
+    @keyframes float-orbs {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      33% { transform: rotate(120deg) scale(1.1); }
+      66% { transform: rotate(240deg) scale(0.9); }
+    }
+
+    /* Enhanced glassmorphism effects */
+    .glass-card {
+      background: linear-gradient(135deg, var(--glass-bg) 0%, rgba(255, 255, 255, 0.02) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    /* Enhanced header */
+    .page-header {
+      background: linear-gradient(135deg, 
+        rgba(0, 102, 255, 0.2) 0%, 
+        rgba(106, 90, 205, 0.2) 50%, 
+        rgba(0, 230, 255, 0.2) 100%);
+      backdrop-filter: blur(30px);
+      padding: 3rem 0;
+      margin-bottom: 2rem;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: 
+        conic-gradient(from 0deg, transparent, rgba(0, 230, 255, 0.1), transparent, rgba(106, 90, 205, 0.1), transparent);
+      animation: rotate-gradient 20s linear infinite;
+    }
+
+    @keyframes rotate-gradient {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .page-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 800;
+      font-size: 3rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-blue), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 30px rgba(0, 230, 255, 0.3);
+      position: relative;
+      z-index: 2;
+      animation: title-glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes title-glow {
+      0% { filter: drop-shadow(0 0 10px rgba(0, 230, 255, 0.3)); }
+      100% { filter: drop-shadow(0 0 20px rgba(106, 90, 205, 0.5)); }
+    }
+
+    .cart-icon {
+      font-size: 4rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: float-icon 4s ease-in-out infinite, icon-pulse 2s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 15px var(--glow-secondary));
+    }
+
+    @keyframes float-icon {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-15px) rotate(2deg); }
+      50% { transform: translateY(-5px) rotate(-1deg); }
+      75% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    @keyframes icon-pulse {
+      0% { filter: drop-shadow(0 0 15px var(--glow-secondary)); }
+      100% { filter: drop-shadow(0 0 25px var(--glow-primary)); }
+    }
+
+    /* Section titles */
     h2 {
-      color: #a5b4fc;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-blue));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       text-transform: uppercase;
       letter-spacing: 3px;
-      font-weight: 900;
-      text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
-      margin-bottom: 30px;
+      margin-bottom: 2rem;
       position: relative;
     }
 
@@ -50,235 +203,414 @@
       bottom: -10px;
       left: 0;
       width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, #6366f1, #9333ea, transparent);
-      animation: scanLine 3s linear infinite;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent-cyan) 0%, var(--primary-blue) 50%, transparent 100%);
+      animation: scan-line 3s ease-in-out infinite;
     }
 
-    @keyframes scanLine {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
+    @keyframes scan-line {
+      0% { transform: scaleX(0); }
+      50% { transform: scaleX(1); }
+      100% { transform: scaleX(0); }
     }
 
-    .card {
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #581c87 100%);
-      border: 2px solid #6366f1;
-      border-radius: 15px;
-      box-shadow: 0 15px 35px rgba(99, 102, 241, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .card::before {
-      content: '';
-      position: absolute;
-      top: -2px;
-      left: -2px;
-      right: -2px;
-      bottom: -2px;
-      background: linear-gradient(45deg, #6366f1, #9333ea, #6366f1);
-      border-radius: 15px;
-      z-index: -1;
-      animation: borderGlow 2s linear infinite;
-    }
-
-    @keyframes borderGlow {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-
-    .card-body {
-      position: relative;
-      z-index: 1;
-    }
-
-    .card-body h4 {
-      color: #e0e7ff;
+    /* Enhanced buttons */
+    .btn {
+      border-radius: 50px;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 2px;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    hr {
-      border: none;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #6366f1, #9333ea, transparent);
-      margin: 20px 0;
-      animation: hrPulse 2s ease-in-out infinite;
-    }
-
-    @keyframes hrPulse {
-      0%, 100% { opacity: 0.5; }
-      50% { opacity: 1; }
-    }
-
-    .d-flex span, .d-flex strong {
-      color: #a5b4fc;
-      font-weight: 600;
-    }
-
-    .btn {
-      border-radius: 8px;
-      font-family: 'Orbitron', monospace;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
       position: relative;
       overflow: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .btn-success {
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
-      border: 2px solid #10b981;
-      color: #fff;
-      box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3);
-    }
-
-    .btn-success:hover:not(:disabled) {
-      background: linear-gradient(135deg, #047857 0%, #065f46 100%);
-      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
-      transform: translateY(-2px);
-    }
-
-    .btn-success:disabled {
-      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
-      border-color: #4b5563;
-      color: #6b7280;
-      box-shadow: none;
-    }
-
-    .btn-outline-secondary {
-      background: transparent;
-      border: 2px solid #6366f1;
-      color: #a5b4fc;
-      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
-    }
-
-    .btn-outline-secondary:hover {
-      background: linear-gradient(135deg, #6366f1 0%, #9333ea 100%);
-      border-color: #9333ea;
-      color: #fff;
-      box-shadow: 0 8px 25px rgba(147, 51, 234, 0.4);
-      transform: translateY(-2px);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 14px 28px;
     }
 
     .btn::before {
       content: '';
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      transition: all 0.6s ease;
     }
 
     .btn:hover::before {
-      width: 300px;
-      height: 300px;
+      left: 100%;
     }
 
-    .bi-cart3 {
-      color: #9333ea;
-      margin-right: 10px;
-      animation: cartFloat 3s ease-in-out infinite;
+    .btn-robot {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 50%, var(--accent-cyan) 100%);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 15px var(--glow-primary);
     }
 
-    @keyframes cartFloat {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-5px); }
+    .btn-robot:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px var(--glow-secondary);
+      color: white;
     }
 
-    .bi-credit-card, .bi-arrow-left {
-      margin-right: 8px;
+    .btn-robot:disabled {
+      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+      border: none;
+      color: #6b7280;
+      box-shadow: none;
+      transform: none;
     }
 
+    .btn-robot-outline {
+      background: transparent;
+      border: 2px solid transparent;
+      background-image: linear-gradient(var(--card-bg), var(--card-bg)), 
+                        linear-gradient(135deg, var(--accent-cyan), var(--primary-blue), var(--primary-purple));
+      background-origin: border-box;
+      background-clip: content-box, border-box;
+      color: white !important;
+    }
+
+    .btn-robot-outline:hover {
+      color: white !important;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px var(--glow-secondary);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-green) 0%, #00cc66 100%);
+      border: none;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+    }
+
+    .btn-success:hover:not(:disabled) {
+      background: linear-gradient(135deg, #00cc66 0%, var(--success-green) 100%);
+      box-shadow: 0 8px 25px rgba(0, 255, 136, 0.5);
+      transform: translateY(-3px) scale(1.02);
+      color: white;
+    }
+
+    .btn-success:disabled {
+      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+      color: #6b7280;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Enhanced cards */
+    .card {
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.9) 0%, 
+        rgba(37, 37, 70, 0.7) 50%, 
+        rgba(26, 26, 46, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        var(--accent-cyan) 0%, 
+        var(--primary-blue) 25%, 
+        var(--primary-purple) 50%, 
+        var(--accent-pink) 75%, 
+        var(--accent-cyan) 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      border-radius: 24px 24px 0 0;
+    }
+
+    .card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, 
+        rgba(0, 230, 255, 0.05) 0%, 
+        transparent 50%, 
+        rgba(106, 90, 205, 0.05) 100%);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      border-radius: 24px;
+      pointer-events: none;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 
+        0 25px 60px rgba(0, 0, 0, 0.4),
+        0 0 30px var(--glow-secondary),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-color: rgba(0, 230, 255, 0.3);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card:hover::after {
+      opacity: 1;
+    }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .card-body h4 {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 0 10px rgba(0, 230, 255, 0.3);
+    }
+
+    /* Enhanced cart summary */
+    .cart-summary {
+      position: sticky;
+      top: 20px;
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.95) 0%, 
+        rgba(37, 37, 70, 0.9) 100%);
+      backdrop-filter: blur(25px);
+      border: 1px solid rgba(0, 230, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 
+        0 15px 40px rgba(0, 0, 0, 0.4),
+        0 0 30px rgba(0, 230, 255, 0.1);
+    }
+
+    /* Enhanced form controls and inputs */
     .quantity-input {
       width: 80px;
       margin: 0 auto;
-      background: linear-gradient(145deg, #1e1b4b, #312e81);
-      border: 2px solid #6366f1;
-      color: #e0e7ff;
-      border-radius: 6px;
-      padding: 8px;
+      background: rgba(26, 26, 46, 0.8);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(0, 230, 255, 0.3);
+      border-radius: 12px;
+      color: white;
       text-align: center;
       font-family: 'Orbitron', monospace;
-      font-weight: bold;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+      font-weight: 600;
+      padding: 10px;
+      transition: all 0.3s ease;
     }
 
     .quantity-input:focus {
       outline: none;
-      border-color: #9333ea;
-      box-shadow: 0 0 15px rgba(147, 51, 234, 0.4);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 20px rgba(0, 230, 255, 0.3);
+      background: rgba(26, 26, 46, 0.9);
     }
 
-    .total-section {
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #581c87 100%);
-      border: 2px solid #6366f1;
-      padding: 20px;
-      border-radius: 12px;
-      margin-top: 20px;
-      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2);
+    /* Enhanced hr styling */
+    hr {
+      border: none;
+      height: 2px;
+      background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--accent-cyan) 25%, 
+        var(--primary-blue) 50%, 
+        var(--primary-purple) 75%, 
+        transparent 100%);
+      margin: 1.5rem 0;
+      animation: hr-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes hr-pulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+
+    /* Enhanced text styling */
+    .d-flex span, .d-flex strong {
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+    }
+
+    /* Cart table styling */
+    .table {
+      color: white;
+      background: transparent;
+    }
+
+    .table th {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+      color: white;
+      font-family: 'Orbitron', monospace;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      border: none;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0, 102, 255, 0.3);
+    }
+
+    .table td {
+      background: rgba(255, 255, 255, 0.95);
+      color: #1a1a2e !important;
+      font-family: 'Exo 2', sans-serif;
+      font-weight: 600;
+      border: none;
+      padding: 1rem;
+      text-align: center;
+      vertical-align: middle;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .table td * {
+      color: #1a1a2e !important;
+    }
+
+    .table-container {
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.9) 0%, 
+        rgba(37, 37, 70, 0.7) 50%, 
+        rgba(26, 26, 46, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      overflow: hidden;
+      box-shadow: 
+        0 10px 40px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+
+    .table-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, 
+        var(--accent-cyan) 0%, 
+        var(--primary-blue) 25%, 
+        var(--primary-purple) 50%, 
+        var(--accent-pink) 75%, 
+        var(--accent-cyan) 100%);
+      border-radius: 24px 24px 0 0;
+    }
+
+    /* Product name styling in table */
+    .table td .product-name {
+      color: #1a1a2e !important;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    /* Price styling in table */
+    .table td .price {
+      color: #059669 !important;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    /* Subtotal styling in table */
+    .table td .subtotal {
+      color: #1a1a2e !important;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    /* Enhanced empty cart styling */
+    .empty-cart {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: white;
+      background: linear-gradient(135deg, 
+        rgba(26, 26, 46, 0.3) 0%, 
+        rgba(10, 10, 15, 0.5) 100%);
+      backdrop-filter: blur(15px);
+      border: 2px dashed rgba(0, 230, 255, 0.3);
+      border-radius: 24px;
+      font-family: 'Exo 2', sans-serif;
       position: relative;
       overflow: hidden;
     }
 
-    .empty-cart {
-      text-align: center;
-      padding: 60px 20px;
-      color: #a5b4fc;
-      background: radial-gradient(circle at center, #1e1b4b 0%, #0f0d2a 100%);
-      border: 2px dashed #6366f1;
-      border-radius: 12px;
-      font-family: 'Orbitron', monospace;
+    .empty-cart::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(0, 230, 255, 0.1), transparent);
+      animation: empty-scan 4s ease-in-out infinite;
+    }
+
+    @keyframes empty-scan {
+      0% { left: -100%; }
+      50% { left: 100%; }
+      100% { left: 100%; }
     }
 
     .empty-cart i {
-      font-size: 4rem;
-      margin-bottom: 20px;
-      color: #9333ea;
-      text-shadow: 0 0 20px rgba(147, 51, 234, 0.6);
-      animation: pulse 2s ease-in-out infinite;
+      font-size: 5rem;
+      margin-bottom: 2rem;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: empty-float 3s ease-in-out infinite, empty-pulse 2s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 20px rgba(0, 230, 255, 0.3));
     }
 
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.1); opacity: 1; }
+    @keyframes empty-float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
     }
 
-    .cart-header {
-      border-bottom: 3px solid transparent;
-      background: linear-gradient(90deg, #6366f1, #9333ea) bottom/100% 3px no-repeat;
-      padding-bottom: 15px;
-      margin-bottom: 20px;
-      position: relative;
+    @keyframes empty-pulse {
+      0% { filter: drop-shadow(0 0 20px rgba(0, 230, 255, 0.3)); }
+      100% { filter: drop-shadow(0 0 30px rgba(106, 90, 205, 0.5)); }
+    }
+
+    .empty-cart h3 {
       font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 1rem;
       text-transform: uppercase;
       letter-spacing: 2px;
-      color: #e0e7ff;
     }
 
-    .cart-summary {
-      position: sticky;
-      top: 20px;
-      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
-      border: 2px solid #6366f1;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
-      backdrop-filter: blur(10px);
+    .empty-cart p {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
     }
 
-    /* Glitch effect for totals */
+    /* Enhanced total display with glitch effect */
     #selectedTotal {
       position: relative;
       display: inline-block;
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      color: var(--success-green);
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
     }
 
     #selectedTotal::before {
@@ -288,17 +620,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      color: #9333ea;
+      color: var(--accent-cyan);
       animation: glitch 2s infinite;
       clip: rect(0, 900px, 0, 0);
     }
 
     @keyframes glitch {
-      0% { clip: rect(42px, 9999px, 44px, 0); }
-      25% { clip: rect(12px, 9999px, 59px, 0); }
-      50% { clip: rect(69px, 9999px, 71px, 0); }
-      75% { clip: rect(30px, 9999px, 34px, 0); }
-      100% { clip: rect(91px, 9999px, 92px, 0); }
+      0% { clip: rect(42px, 9999px, 44px, 0); transform: translateX(0); }
+      25% { clip: rect(12px, 9999px, 59px, 0); transform: translateX(-2px); }
+      50% { clip: rect(69px, 9999px, 71px, 0); transform: translateX(2px); }
+      75% { clip: rect(30px, 9999px, 34px, 0); transform: translateX(-1px); }
+      100% { clip: rect(91px, 9999px, 92px, 0); transform: translateX(0); }
     }
 
     /* Loading animation */
@@ -310,50 +642,180 @@
       content: '';
       position: absolute;
       top: 50%;
-      right: 10px;
+      right: 15px;
       width: 20px;
       height: 20px;
-      border: 2px solid #6366f1;
-      border-top: 2px solid #9333ea;
+      border: 2px solid rgba(0, 230, 255, 0.3);
+      border-top: 2px solid var(--accent-cyan);
       border-radius: 50%;
-      animation: spin 1s linear infinite;
+      animation: loading-spin 1s linear infinite;
       transform: translateY(-50%);
     }
 
-    @keyframes spin {
+    @keyframes loading-spin {
       0% { transform: translateY(-50%) rotate(0deg); }
       100% { transform: translateY(-50%) rotate(360deg); }
+    }
+
+    /* Icons with enhanced effects */
+    .bi-cart3, .fa-shopping-cart {
+      margin-right: 10px;
+      animation: cart-bounce 3s ease-in-out infinite;
+    }
+
+    @keyframes cart-bounce {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-3px) rotate(2deg); }
+      50% { transform: translateY(0px) rotate(0deg); }
+      75% { transform: translateY(-2px) rotate(-1deg); }
+    }
+
+    .bi-cpu, .fa-microchip {
+      color: var(--accent-cyan);
+      margin-right: 8px;
+      animation: cpu-pulse 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes cpu-pulse {
+      0% { text-shadow: 0 0 5px rgba(0, 230, 255, 0.3); }
+      100% { text-shadow: 0 0 15px rgba(0, 230, 255, 0.7); }
+    }
+
+    /* Enhanced scrollbar */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--darker-bg);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-purple) 100%);
+      border-radius: 10px;
+      border: 2px solid var(--darker-bg);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-pink) 100%);
+    }
+
+    /* Floating action button */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--primary-purple));
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 25px rgba(0, 230, 255, 0.3);
+      z-index: 1000;
+    }
+
+    .fab:hover {
+      transform: scale(1.1) rotate(180deg);
+      box-shadow: 0 15px 40px rgba(0, 230, 255, 0.5);
+    }
+
+    /* Responsive enhancements */
+    @media (max-width: 768px) {
+      .page-title {
+        font-size: 2.2rem;
+      }
+      
+      .cart-icon {
+        font-size: 3rem;
+      }
+      
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .btn, .btn-robot, .btn-robot-outline, .btn-success {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+      }
+
+      .fab {
+        width: 50px;
+        height: 50px;
+        bottom: 20px;
+        right: 20px;
+        font-size: 1.2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+
+    /* Enhanced focus states for accessibility */
+    .btn:focus,
+    .quantity-input:focus {
+      outline: 2px solid var(--accent-cyan);
+      outline-offset: 2px;
+    }
+
+    /* Micro-interactions */
+    .interactive-element {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .interactive-element:hover {
+      transform: translateY(-2px);
     }
   </style>
 </head>
 <body>
   <div id="header"></div>
 
+  <!-- Enhanced header section -->
+  <div class="page-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-8">
+          <h1 class="page-title mb-2">
+            <i class="fas fa-robot cart-icon me-3"></i>
+            Romeros Cart
+          </h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="container mt-4">
     <div class="row">
       <div class="col-lg-8">
-        <h2><i class="bi bi-cart3"></i> Your Shopping Cart</h2>
+        <h2><i class="fas fa-shopping-cart"></i> Neural Shopping Cart</h2>
         <div id="cartContents"></div>
       </div>
       
       <div class="col-lg-4">
-        <div class="card cart-summary">
+        <div class="card cart-summary glass-card">
           <div class="card-body">
-            <h4><i class="bi bi-cpu"></i> Order Summary</h4>
+            <h4><i class="fas fa-microchip"></i> Order Processing Unit</h4>
             <hr>
             <div class="d-flex justify-content-between mb-3">
-              <span>Items:</span>
+              <span>Items in Neural Buffer:</span>
               <span id="selectedCount">0</span>
             </div>
             <div class="d-flex justify-content-between mb-3">
-              <strong>Total:</strong>
+              <strong>Total Processing Cost:</strong>
               <strong id="selectedTotal" data-text="₱0.00">₱0.00</strong>
             </div>
-            <button class="btn btn-success w-100" id="checkoutBtn" disabled>
-              <i class="bi bi-credit-card"></i> Checkout
+            <button class="btn btn-success w-100 mb-3" id="checkoutBtn" disabled>
+              <i class="fas fa-credit-card me-2"></i> Execute Checkout Protocol
             </button>
-            <a href="/home.html" class="btn btn-outline-secondary w-100 mt-2">
-              <i class="bi bi-arrow-left"></i> Continue Shopping
+            <a href="/home.html" class="btn btn-robot-outline w-100 interactive-element">
+              <i class="fas fa-arrow-left me-2"></i> Continue Shopping
             </a>
           </div>
         </div>
@@ -361,12 +823,19 @@
     </div>
   </div>
 
+  <!-- Floating action button for quick actions -->
+  <button class="fab" id="quickActionsBtn" title="Quick Actions">
+    <i class="fas fa-plus"></i>
+  </button>
+
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Enhanced cart.js functionality with robotic effects
+    // Enhanced cart.js functionality with futuristic effects
     $(document).ready(function() {
-      // Add loading effect to buttons
+      let showDeleted = true;
+      
+      // Enhanced loading effect for buttons with neural processing animation
       $('.btn').on('click', function() {
         $(this).addClass('loading');
         setTimeout(() => {
@@ -374,27 +843,366 @@
         }, 2000);
       });
 
-      // Update total display with glitch effect
+      // Update total display with enhanced glitch effect
       function updateTotalDisplay(total) {
         const totalElement = $('#selectedTotal');
         totalElement.attr('data-text', total);
         totalElement.text(total);
+        
+        // Add neural processing effect
+        totalElement.parent().addClass('animate__animated animate__pulse');
+        setTimeout(() => {
+          totalElement.parent().removeClass('animate__animated animate__pulse');
+        }, 600);
       }
 
-      // Simulate cart loading
-      setTimeout(function() {
+      // Enhanced cart loading with neural boot sequence
+      function simulateNeuralBoot() {
+        const bootMessages = [
+          'Initializing Neural Shopping System...',
+          'Loading Quantum Cart Database...',
+          'Synchronizing with AI Inventory...',
+          'Neural Cart Ready for Operations'
+        ];
+        
+        let messageIndex = 0;
+        const bootInterval = setInterval(() => {
+          if (messageIndex < bootMessages.length - 1) {
+            console.log(bootMessages[messageIndex]);
+            messageIndex++;
+          } else {
+            clearInterval(bootInterval);
+            loadCartContents();
+          }
+        }, 500);
+      }
+
+      // Enhanced cart content loading
+      function loadCartContents() {
         if ($('#cartContents').is(':empty')) {
           $('#cartContents').html(`
             <div class="empty-cart">
-              <i class="bi bi-robot"></i>
-              <h3>Your cart is empty</h3>
-              <p>Add some items to get started!</p>
+              <i class="fas fa-robot"></i>
+              <h3>Neural Cart Buffer Empty</h3>
+              <p>Your quantum shopping cart is currently in standby mode. Initialize by adding products to the neural inventory system.</p>
+              <a href="/products.html" class="btn btn-robot mt-3">
+                <i class="fas fa-shopping-cart me-2"></i>Access Product Database
+              </a>
             </div>
           `);
         }
-      }, 1000);
+      }
+
+      // Floating action button functionality with enhanced menu
+      $('#quickActionsBtn').click(function() {
+        $(this).addClass('animate__animated animate__pulse');
+        setTimeout(() => {
+          $(this).removeClass('animate__animated animate__pulse');
+        }, 600);
+        
+        // Enhanced quick action menu with futuristic styling
+        Swal.fire({
+          title: '<i class="fas fa-robot me-2"></i>Neural Quick Actions',
+          html: `
+            <div class="d-grid gap-3" style="font-family: 'Exo 2', sans-serif;">
+              <button class="btn btn-robot" onclick="window.location.href='/products.html'">
+                <i class="fas fa-shopping-cart me-2"></i>Access Product Matrix
+              </button>
+              <button class="btn btn-robot-outline" onclick="scrollToTop()">
+                <i class="fas fa-arrow-up me-2"></i>Quantum Scroll to Top
+              </button>
+              <button class="btn btn-robot-outline" onclick="clearCart()">
+                <i class="fas fa-trash-alt me-2"></i>Purge Cart Buffer
+              </button>
+              <button class="btn btn-robot-outline" onclick="saveCart()">
+                <i class="fas fa-save me-2"></i>Save to Neural Memory
+              </button>
+            </div>
+          `,
+          showConfirmButton: false,
+          background: 'rgba(26, 26, 46, 0.95)',
+          color: '#ffffff',
+          customClass: {
+            popup: 'glass-card',
+            title: 'text-cyan'
+          },
+          backdrop: 'rgba(0, 0, 0, 0.8)'
+        });
+      });
+
+      // Enhanced quantity input with neural validation
+      $(document).on('input', '.quantity-input', function() {
+        const input = $(this);
+        const value = parseInt(input.val());
+        
+        // Add neural processing animation
+        input.addClass('loading');
+        setTimeout(() => {
+          input.removeClass('loading');
+          
+          // Update totals with glitch effect
+          updateCartTotals();
+          
+          // Visual feedback for quantity change
+          input.animate({
+            backgroundColor: 'rgba(0, 230, 255, 0.2)'
+          }, 200).animate({
+            backgroundColor: 'rgba(26, 26, 46, 0.8)'
+          }, 200);
+        }, 800);
+      });
+
+      // Enhanced checkout button functionality
+      $('#checkoutBtn').click(function() {
+        if (!$(this).prop('disabled')) {
+          Swal.fire({
+            title: '<i class="fas fa-credit-card me-2"></i>Neural Checkout Protocol',
+            html: `
+              <div style="font-family: 'Exo 2', sans-serif; text-align: center;">
+                <div class="mb-3">
+                  <i class="fas fa-robot" style="font-size: 3rem; color: var(--accent-cyan); animation: pulse 2s infinite;"></i>
+                </div>
+                <p>Initializing secure payment neural network...</p>
+                <div class="progress mt-3" style="height: 10px; background: rgba(0, 0, 0, 0.3);">
+                  <div class="progress-bar" style="background: linear-gradient(90deg, var(--accent-cyan), var(--primary-blue)); animation: progress-fill 3s ease-in-out forwards;"></div>
+                </div>
+              </div>
+            `,
+            showConfirmButton: false,
+            background: 'rgba(26, 26, 46, 0.95)',
+            color: '#ffffff',
+            customClass: {
+              popup: 'glass-card'
+            },
+            timer: 3000,
+            didOpen: () => {
+              // Add progress bar animation
+              const style = document.createElement('style');
+              style.textContent = `
+                @keyframes progress-fill {
+                  0% { width: 0%; }
+                  100% { width: 100%; }
+                }
+              `;
+              document.head.appendChild(style);
+            }
+          }).then(() => {
+            // Redirect to checkout page
+            window.location.href = '/checkout.html';
+          });
+        }
+      });
+
+      // Enhanced cart functionality
+      function updateCartTotals() {
+        let totalItems = 0;
+        let totalCost = 0;
+        
+        $('.quantity-input').each(function() {
+          const quantity = parseInt($(this).val()) || 0;
+          const price = parseFloat($(this).data('price')) || 0;
+          totalItems += quantity;
+          totalCost += quantity * price;
+        });
+        
+        $('#selectedCount').text(totalItems);
+        updateTotalDisplay('₱' + totalCost.toFixed(2));
+        
+        // Enable/disable checkout button with neural logic
+        if (totalItems > 0) {
+          $('#checkoutBtn').prop('disabled', false).removeClass('btn-disabled');
+        } else {
+          $('#checkoutBtn').prop('disabled', true).addClass('btn-disabled');
+        }
+      }
+
+      // Enhanced particle effect system
+      function createNeuralParticles(element) {
+        const rect = element.getBoundingClientRect();
+        const colors = ['var(--accent-cyan)', 'var(--primary-blue)', 'var(--primary-purple)', 'var(--accent-pink)'];
+        
+        for (let i = 0; i < 8; i++) {
+          const particle = $('<div>').css({
+            position: 'fixed',
+            left: rect.left + Math.random() * rect.width,
+            top: rect.top + Math.random() * rect.height,
+            width: Math.random() * 6 + 2 + 'px',
+            height: Math.random() * 6 + 2 + 'px',
+            background: colors[Math.floor(Math.random() * colors.length)],
+            borderRadius: '50%',
+            pointerEvents: 'none',
+            zIndex: 9999,
+            animation: `neural-particle-float ${Math.random() * 2 + 1}s ease-out forwards`
+          });
+          
+          $('body').append(particle);
+          setTimeout(() => particle.remove(), 2000);
+        }
+      }
+
+      // Enhanced hover effects for interactive elements
+      $('.btn, .card, .quantity-input').hover(function() {
+        createNeuralParticles(this);
+      });
+
+      // Neural scan lines effect
+      function addScanLines() {
+        if (!$('#scan-lines').length) {
+          $('<div id="scan-lines">').css({
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: `
+              repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0, 230, 255, 0.01) 2px,
+                rgba(0, 230, 255, 0.01) 4px
+              )
+            `,
+            pointerEvents: 'none',
+            zIndex: -1,
+            animation: 'scan-drift 10s linear infinite'
+          }).appendTo('body');
+        }
+      }
+
+      // Initialize neural effects
+      addScanLines();
+      
+      // Add neural particle CSS animations
+      if (!$('#neural-particle-style').length) {
+        $('<style id="neural-particle-style">').text(`
+          @keyframes neural-particle-float {
+            0% { 
+              opacity: 1; 
+              transform: translateY(0) scale(1) rotate(0deg); 
+            }
+            100% { 
+              opacity: 0; 
+              transform: translateY(-80px) scale(0) rotate(360deg); 
+            }
+          }
+          
+          @keyframes scan-drift {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(20px); }
+          }
+          
+          @keyframes pulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+          }
+        `).appendTo('head');
+      }
+
+      // Start neural boot sequence
+      simulateNeuralBoot();
+      
+      // Enhanced scroll animations with parallax
+      $(window).scroll(function() {
+        const scrolled = $(this).scrollTop();
+        const parallax = $('.page-header');
+        const speed = scrolled * 0.3;
+        parallax.css('transform', `translateY(${speed}px)`);
+        
+        // Update scan lines based on scroll
+        const scanLines = $('#scan-lines');
+        if (scanLines.length) {
+          scanLines.css('opacity', Math.max(0.1, 1 - scrolled / 1000));
+        }
+      });
+
+      // Enhanced custom cursor with neural trail
+      $(document).mousemove(function(e) {
+        if (!$('#neural-cursor').length) {
+          $('<div id="neural-cursor">').css({
+            position: 'fixed',
+            width: '30px',
+            height: '30px',
+            background: 'radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%)',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+            zIndex: 10000,
+            opacity: 0.4,
+            transition: 'transform 0.1s ease',
+            border: '1px solid rgba(0, 230, 255, 0.3)'
+          }).appendTo('body');
+        }
+        
+        $('#neural-cursor').css({
+          left: e.clientX - 15,
+          top: e.clientY - 15
+        });
+        
+        // Create neural trail
+        if (Math.random() > 0.7) {
+          const trail = $('<div>').css({
+            position: 'fixed',
+            left: e.clientX - 2,
+            top: e.clientY - 2,
+            width: '4px',
+            height: '4px',
+            background: 'var(--accent-cyan)',
+            borderRadius: '50%',
+            pointerEvents: 'none',
+            zIndex: 9999,
+            animation: 'neural-particle-float 1s ease-out forwards'
+          });
+          
+          $('body').append(trail);
+          setTimeout(() => trail.remove(), 1000);
+        }
+      });
+      
+      // Initialize cart totals
+      updateCartTotals();
     });
+    
+    // Global utility functions
+    window.scrollToTop = function() {
+      $('html, body').animate({scrollTop: 0}, 800);
+    };
+    
+    window.clearCart = function() {
+      Swal.fire({
+        title: 'Neural Cart Purge',
+        text: 'This will remove all items from your cart buffer. Continue?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Execute Purge',
+        cancelButtonText: 'Abort',
+        background: 'rgba(26, 26, 46, 0.95)',
+        color: '#ffffff',
+        customClass: {
+          confirmButton: 'btn btn-robot',
+          cancelButton: 'btn btn-robot-outline'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          $('#cartContents').empty();
+          loadCartContents();
+          updateCartTotals();
+        }
+      });
+    };
+    
+    window.saveCart = function() {
+      Swal.fire({
+        title: 'Neural Memory Save',
+        text: 'Cart data saved to quantum storage successfully!',
+        icon: 'success',
+        background: 'rgba(26, 26, 46, 0.95)',
+        color: '#ffffff',
+        customClass: {
+          confirmButton: 'btn btn-robot'
+        }
+      });
+    };
   </script>
   <script src="js/cart.js"></script>
 </body>
-</html>
+</html> 

@@ -360,6 +360,12 @@
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
+    .status-reviewed {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(200, 200, 200, 0.3) 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
     .status-processing {
       background: linear-gradient(135deg, var(--warning-yellow) 0%, #ffdd00 100%);
       color: var(--darker-bg);
@@ -403,6 +409,12 @@
       transition: all 0.3s ease;
       border-left: 3px solid transparent;
     }
+
+    .order-card .text-muted,
+.order-card p.text-muted,
+.product-item .text-muted {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
 
     .product-item:hover {
       background: rgba(40, 40, 80, 0.7);
