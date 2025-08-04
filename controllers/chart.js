@@ -20,7 +20,7 @@ exports.addressChart = (req, res) => {
 };
 
 exports.salesChart = (req, res) => {
-    const sql = 'SELECT monthname(oi.date_delivered) as month, sum(ol.quantity * i.sell_price) as total FROM orderinfo oi INNER JOIN orderline ol ON oi.orderinfo_id = ol.orderinfo_id INNER JOIN item i ON i.item_id = ol.item_id GROUP BY month(oi.date_placed)';
+    const sql = 'SELECT monthname(oi.date_placed) as month, sum(ol.quantity * i.sell_price) as total FROM orderinfo oi INNER JOIN orderline ol ON oi.orderinfo_id = ol.orderinfo_id INNER JOIN item i ON i.item_id = ol.item_id GROUP BY month(oi.date_placed)';
     try {
         connection.query(sql, (err, rows, fields) => {
             if (err instanceof Error) {
